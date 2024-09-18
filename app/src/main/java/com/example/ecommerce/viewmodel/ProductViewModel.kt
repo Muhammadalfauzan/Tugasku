@@ -4,15 +4,17 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.ecommerce.data.CategoriesResponse
-import com.example.ecommerce.data.Product
+import com.example.ecommerce.data.apimodel.Product
 import com.example.ecommerce.data.Repository
+import com.example.ecommerce.database.product.ProductItems
 import com.example.ecommerce.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -87,9 +89,9 @@ class ProductViewModel @Inject constructor(
                 listMenuResponse.value = handleListMenuResponse(response)
 
                 val listMenu = listMenuResponse.value!!.data
-             /*   if (listMenu != null) {
+                if (listMenu != null) {
                     offlineCacheMenu(listMenu)
-                }*/
+                }
             } catch (e: Exception) {
                 listMenuResponse.value = NetworkResult.Error("Error: $e")
             }
@@ -98,10 +100,7 @@ class ProductViewModel @Inject constructor(
         }
     }
 
- /*   private fun offlineCacheMenu(listMenu: Product) {
-        val menu = Menu(listMenu)
-        insertMenu(menu)
-    }*/
+
 
     private fun handleListMenuResponse(response: Response<Product>): NetworkResult<Product> {
         when {
@@ -123,5 +122,17 @@ class ProductViewModel @Inject constructor(
             }
         }
     }
+
+    /** Room Database**/
+    val readProduct : LiveData<List<ProductItems>> = repository.local.readProduct().asLiveData()
+
+    private fun insertProduct(product : ProductItems) =
+        viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
+
+
+       private fun offlineCacheMenu(listMenu: Product) {
+       val menu = ProductItems(listMenu)
+       insertProduct(menu)
+   }
 }
 

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id ("kotlin-kapt")
+    id ("kotlin-parcelize")
     id ("androidx.navigation.safeargs")
     id ("com.google.dagger.hilt.android")
 }
@@ -75,6 +76,14 @@ dependencies {
     //Glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     kapt ("com.github.bumptech.glide:compiler:4.16.0")
+
+    // Room database
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    //Live Data
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.5")
 }
     kapt {
         correctErrorTypes =  true

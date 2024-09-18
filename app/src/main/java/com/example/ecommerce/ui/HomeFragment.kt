@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ecommerce.ItemDecorationRv
@@ -18,6 +19,7 @@ import com.example.ecommerce.databinding.FragmentHomeBinding
 import com.example.ecommerce.utils.NetworkResult
 import com.example.ecommerce.viewmodel.ProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -35,6 +37,7 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupRecyclerViews()
+        readDataProduct()
         observeCategories()
         observeProducts() // Tambahkan observasi untuk produk
         productViewModel.getCategory() // Memanggil fungsi untuk mengambil kategori
@@ -108,5 +111,19 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun readDataProduct(){
+        Log.d("Read database", "read menu database called")
+        lifecycleScope.launch {
+            productViewModel.readProduct.observe(viewLifecycleOwner) { database ->
+                if (database.isNotEmpty()) {
+                    productAdapter.setData(database.first().listProductResponse)
+                } else {
+                   /* requestMenuFromApi()*/
+                }
+            }
+        }
+
     }
 }

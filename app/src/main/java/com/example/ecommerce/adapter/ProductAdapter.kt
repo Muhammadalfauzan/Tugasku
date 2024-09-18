@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ecommerce.R
-import com.example.ecommerce.data.ProductItem
+import com.example.ecommerce.data.apimodel.ProductItem
 
 class ProductAdapter : RecyclerView.Adapter<ProductAdapter.MyViewHolder>() {
 

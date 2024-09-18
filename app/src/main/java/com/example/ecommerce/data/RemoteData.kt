@@ -1,6 +1,8 @@
 package com.example.ecommerce.data
 
-import com.example.ecommerce.api.ApiService
+import com.example.ecommerce.data.api.ApiService
+import com.example.ecommerce.data.apimodel.CategoriesResponse
+import com.example.ecommerce.data.apimodel.Product
 import retrofit2.Response
 import javax.inject.Inject
 
