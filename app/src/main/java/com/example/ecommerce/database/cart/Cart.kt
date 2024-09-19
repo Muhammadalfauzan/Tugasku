@@ -1,11 +1,8 @@
-/*
 package com.example.ecommerce.database.cart
 
 import android.os.Parcelable
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.ecommerce.data.apimodel.Rating
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -18,8 +15,6 @@ data class Cart(
     val image: String?,
     val price: Double?,
     val title: String?,
-
-    @Embedded
-    val rating: Rating?,
-    var quantity: Int
-) : Parcelable*/
+    var quantity: Int,
+    var totalPrice : Double
+) : Parcelable

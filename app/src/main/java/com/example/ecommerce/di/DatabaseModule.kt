@@ -2,6 +2,7 @@ package com.example.ecommerce.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.ecommerce.database.cart.CartDatabase
 import com.example.ecommerce.database.product.ProductDatabase
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,7 @@ object DatabaseModule {
 
 /** CART DATABASE **/
 
-/*    @Singleton
+    @Singleton
     @Provides
     fun provideCartDatabase(
         @ApplicationContext context: Context
@@ -25,11 +26,11 @@ object DatabaseModule {
         context,
         CartDatabase::class.java,
         "cart_database"
-    ).build()*/
+    ).build()
 
-/*    @Singleton
+    @Singleton
     @Provides
-    fun provideCartDao(cartDatabase: CartDatabase) = cartDatabase.cartDao()*/
+    fun provideCartDao(cartDatabase: CartDatabase) = cartDatabase.cartDao()
 
     /** MENU DATABASE **/
     @Singleton

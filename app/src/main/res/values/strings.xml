@@ -4,9 +4,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
-    <string name="home_fragment">Home Fragment</string>
-    <string name="cart_fragment">Cart Fragment</string>
-    <string name="profile_fragment">Profile Fragment</string>
+    <string name="home_fragment">Home </string>
+    <string name="cart_fragment">Cart </string>
+    <string name="profile_fragment">Profile</string>
 
     <string name="discover">Discover\nour new items</string>
 

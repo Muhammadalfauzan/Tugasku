@@ -1,4 +1,3 @@
-/*
 package com.example.ecommerce.database.cart
 
 import androidx.room.Database
@@ -9,4 +8,4 @@ abstract class CartDatabase : RoomDatabase() {
 
     abstract fun cartDao(): CartDao
 
-}*/
+}

@@ -1,4 +1,3 @@
-/*
 package com.example.ecommerce.database.cart
 
 import androidx.lifecycle.LiveData
@@ -20,9 +19,12 @@ interface CartDao {
     @Query("SELECT * FROM cart_items")
     fun  getAllCartItems(): LiveData<List<Cart>>
 
-    @Query("DELETE FROM CART_ITEMS WHERE id = : cartId")
+    @Query("DELETE FROM CART_ITEMS WHERE id = :cartId")
     suspend fun deleteById(cartId:Long)
 
     @Update
     suspend fun update(cartItem: Cart)
-}*/
+
+    @Query("SELECT * FROM cart_items WHERE id = :cartId LIMIT 1")
+    suspend fun getCartItemById(cartId: Int): Cart?
+}

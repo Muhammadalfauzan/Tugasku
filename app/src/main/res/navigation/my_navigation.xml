@@ -27,5 +27,13 @@
         <action
             android:id="@+id/action_homeFragment2_to_cartFragment2"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.ecommerce.ui.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>

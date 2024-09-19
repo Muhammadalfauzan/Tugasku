@@ -84,6 +84,9 @@ dependencies {
 
     //Live Data
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.5")
+
+    //slider
+    implementation ("com.github.denzcoskun:ImageSlideshow:0.1.2")
 }
     kapt {
         correctErrorTypes =  true
