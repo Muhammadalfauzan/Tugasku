@@ -62,8 +62,8 @@ class CartAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         val ivDelete: ImageView = binding.btnDelete
-        val btPlus: Button = binding.btnIncrease
-        val btMin: Button = binding.btnDecrease
+        val btPlus: Button = binding.btnIncrement
+        val btMin: Button = binding.btnIncrement
         val tvNumber: TextView = binding.tvQuantity
 
         fun bind(cartItem: Cart) {

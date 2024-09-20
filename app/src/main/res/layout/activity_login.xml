@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:paddingHorizontal="16dp"
+    tools:context=".ui.auth.LoginActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_lbSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Sign in to your account"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.454"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/poppins_semi_bold"
+            android:text="Email"
+            android:layout_marginTop="80dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/emailLog_lay"
+            app:layout_constraintTop_toBottomOf="@+id/tv_lbSignIn" />
+
+
+        <com.example.chall3.ui.customview.EmailEditText
+            android:id="@+id/emailLog_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="15dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/custom_border"
+            android:fontFamily="@font/poppins_regular"
+            android:hint="Masukan email anda"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress|textMultiLine"
+            android:scrollHorizontally="false"
+            android:maxLines="4"
+            android:minLines="1"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+
+            android:textSize="12sp"
+            app:errorEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            tools:ignore="HardcodedText">
+
+
+        </com.example.chall3.ui.customview.EmailEditText>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kata Sandi"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="@+id/et_password"
+            app:layout_constraintTop_toBottomOf="@+id/emailLog_lay" />
+
+
+        <com.example.ecommerce.customview.PasswordEditText
+            android:id="@+id/et_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:hint="Masukan sandi anda"
+
+            android:imeOptions="actionDone"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="12sp"
+            android:inputType="textPassword"
+            app:textInputLayoutFocusedRectEnabled="true"
+            android:paddingStart="15dp"
+            android:paddingVertical="15dp"
+            android:paddingEnd="15dp"
+            android:maxLines="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColorHint="@color/bronze"
+            android:background="@drawable/custom_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView1"
+            tools:ignore="TextContrastCheck" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bt_login"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="@color/bronze"
+            android:enabled="true"
+            android:text="Sign In"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:cornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_password" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/materialTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="35dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="@string/don_t_have"
+            app:layout_constraintStart_toStartOf="@+id/google_signIn"
+            app:layout_constraintTop_toBottomOf="@+id/google_signIn" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semi_bold"
+            android:text="daftar"
+            android:textColor="@color/bronze"
+            app:layout_constraintStart_toEndOf="@+id/materialTextView3"
+            app:layout_constraintTop_toTopOf="@+id/materialTextView3" />
+
+        <TextView
+            android:id="@+id/tv_orSignInWith"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Or Sign In With "
+            android:layout_marginTop="25dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/bt_login"
+            app:layout_constraintStart_toStartOf="@+id/bt_login"
+            app:layout_constraintTop_toBottomOf="@+id/bt_login" />
+
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_signIn"
+            android:layout_width="125dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="50dp"
+            app:layout_constraintStart_toStartOf="@+id/bt_login"
+            app:layout_constraintTop_toBottomOf="@+id/tv_orSignInWith">
+
+
+        </com.google.android.gms.common.SignInButton>
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_fb"
+            android:contentDescription="facebook"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/fb"
+
+            app:layout_constraintBottom_toBottomOf="@+id/google_signIn"
+            app:layout_constraintStart_toEndOf="@+id/google_signIn"
+            app:layout_constraintTop_toTopOf="@+id/google_signIn" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/bronze"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.52"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

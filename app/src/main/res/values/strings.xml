@@ -9,6 +9,11 @@
     <string name="profile_fragment">Profile</string>
 
     <string name="discover">Discover\nour new items</string>
+    <string name="email_invalid">Email Invalid</string>
+    <string name="invalid_password">Password Invalid</string>
+    <string name="don_t_have">Don`t have an account?</string>
+    <string name="or_sign_in">Or Sign In With</string>
+    <string name="default_web_client_id">Default Web Client Id</string>
 
 
 </resources>

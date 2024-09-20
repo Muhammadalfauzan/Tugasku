@@ -5,6 +5,7 @@ plugins {
     id ("kotlin-parcelize")
     id ("androidx.navigation.safeargs")
     id ("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -26,7 +27,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources =true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -49,6 +51,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,6 +90,17 @@ dependencies {
 
     //slider
     implementation ("com.github.denzcoskun:ImageSlideshow:0.1.2")
+
+    //okHTTP
+    implementation(libs.logging.interceptor)
+
+    // Import the Firebase BoM
+
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
 }
     kapt {
         correctErrorTypes =  true

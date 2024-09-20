@@ -3,6 +3,7 @@ package com.example.ecommerce.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
@@ -32,100 +34,127 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
-    private lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var productAdapter: ProductAdapter
     private val productViewModel: ProductViewModel by viewModels()
 
+    private var recyclerViewState: Parcelable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+    ): View? {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        setupBanner()
         setupRecyclerViews()
         observeCategories()
         observeProducts()
         readDataProduct()
-        productViewModel.getCategory() // Call function to fetch categories
-        productViewModel.getListMenu() // Call function to fetch product list
+        productViewModel.getCategory()
+        productViewModel.getListMenu()
 
-        setupBanner()
         return binding.root
     }
 
     private fun setupRecyclerViews() {
-        // Setup for RecyclerView categories
-        categoryAdapter = CategoryAdapter()
-        binding.rvHorizontal.apply {
-            adapter = categoryAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        }
+        _binding?.let { binding ->
+            categoryAdapter = CategoryAdapter()
+            binding.rvHorizontal.apply {
+                adapter = categoryAdapter
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            }
 
-        productAdapter = ProductAdapter(this) // Pass the fragment itself to handle clicks
-        // Setup for RecyclerView products
-        val spacingInPixels = resources.getDimensionPixelSize(R.dimen.spacing_16dp)
-        binding.rvVertical.apply {
-            layoutManager = GridLayoutManager(context, 2) // Set Grid layout with 2 columns
-            adapter = productAdapter
-            addItemDecoration(ItemDecorationRv(2, spacingInPixels, true)) // Add item decoration
-        }
+            productAdapter = ProductAdapter(this)
+            val layoutManager = GridLayoutManager(context, 2)
+            binding.rvVertical.apply {
+                this.layoutManager = layoutManager
+                adapter = productAdapter
+                setHasFixedSize(true)
+                setItemViewCacheSize(20)
+                itemAnimator = null
+            }
 
-        Log.d("HomeFragment", "RecyclerView Adapters attached: ${binding.rvHorizontal.adapter != null} ${binding.rvVertical.adapter != null}")
+            recyclerViewState?.let {
+                layoutManager.onRestoreInstanceState(it)
+            }
+        }
     }
 
     private fun observeCategories() {
-        productViewModel.categoryResponse.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is NetworkResult.Loading -> {
-                    Log.d("HomeFragment", "Loading categories...")
-                }
-                is NetworkResult.Success -> {
-                    Log.d("HomeFragment", "Categories received successfully")
-                    response.data?.let { categories ->
-                        Log.d("HomeFragment", "Categories: $categories")
-                        categoryAdapter.setData(categories) // Pass category list to adapter
+        _binding?.let {
+            productViewModel.categoryResponse.observe(viewLifecycleOwner) { response ->
+                when (response) {
+                    is NetworkResult.Loading -> {
+                        Log.d("HomeFragment", "Loading categories...")
                     }
-                }
-                is NetworkResult.Error -> {
-                    Log.e("HomeFragment", "Error fetching categories: ${response.message}")
-                    Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
+                    is NetworkResult.Success -> {
+                        response.data?.let { categories ->
+                            categoryAdapter.setData(categories)
+                        }
+                    }
+                    is NetworkResult.Error -> {
+                        Log.e("HomeFragment", "Error fetching categories: ${response.message}")
+                        Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
     }
 
     private fun observeProducts() {
-        productViewModel.listMenuResponse.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is NetworkResult.Loading -> {
-                    Log.d("HomeFragment", "Loading products...")
-                }
-                is NetworkResult.Success -> {
-                    Log.d("HomeFragment", "Products received successfully")
-                    response.data?.let { products ->
-                        Log.d("HomeFragment", "Products: $products")
-                        productAdapter.setData(products) // Pass product list to adapter
+        _binding?.let { binding ->
+            productViewModel.listMenuResponse.observe(viewLifecycleOwner) { response ->
+                when (response) {
+                    is NetworkResult.Loading -> {
+                        Log.d("HomeFragment", "Loading products...")
+                    }
+                    is NetworkResult.Success -> {
+                        response.data?.let { products ->
+                            productAdapter.setData(products)
+                            recyclerViewState?.let {
+                                val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
+                                layoutManager.onRestoreInstanceState(it)
+                            }
+                        }
+                    }
+                    is NetworkResult.Error -> {
+                        loadMenuFromCache()
+                        Log.e("HomeFragment", "Error fetching products: ${response.message}")
+                        Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
                     }
                 }
-                is NetworkResult.Error -> {
-                    Log.e("HomeFragment", "Error fetching products: ${response.message}")
-                    Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loadMenuFromCache() {
+        _binding?.let {
+            productViewModel.readProduct.observe(viewLifecycleOwner) { database ->
+                if (database.isNotEmpty()) {
+                    productAdapter.setData(database.first().listProductResponse)
+                    recyclerViewState?.let {
+                        val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
+                        layoutManager.onRestoreInstanceState(it)
+                    }
                 }
             }
         }
     }
 
     private fun readDataProduct() {
-        Log.d("Read database", "Read menu database called")
-        lifecycleScope.launch {
-            productViewModel.readProduct.observe(viewLifecycleOwner) { database ->
-                if (database.isNotEmpty()) {
-                    productAdapter.setData(database.first().listProductResponse)
-                } else {
-                    // Optionally request data from API if database is empty
-                    // requestMenuFromApi()
+        _binding?.let {
+            lifecycleScope.launch {
+                productViewModel.readProduct.observe(viewLifecycleOwner) { database ->
+                    if (database.isNotEmpty()) {
+                        productAdapter.setData(database.first().listProductResponse)
+                        recyclerViewState?.let {
+                            val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
+                            layoutManager.onRestoreInstanceState(it)
+                        }
+                    }
                 }
             }
         }
@@ -133,21 +162,41 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
     private fun setupBanner() {
         Handler(Looper.getMainLooper()).postDelayed({
-            // Akses ImageSlider langsung melalui binding
-            val imgSlider = binding.bannerLayout.imageSlider // Akses langsung melalui ViewBinding
-            imgSlider?.let {
-                val slides = ArrayList<SlideModel>()
-                slides.add(SlideModel(R.drawable.banner_shoes))
-                slides.add(SlideModel(R.drawable.banner_shoes))
-                slides.add(SlideModel(R.drawable.banner_shoes))
-                it.setImageList(slides, ScaleTypes.FIT)
-                it.visibility = View.VISIBLE
+            _binding?.let { binding ->
+                val imgSlider = binding.bannerLayout.imageSlider
+                imgSlider?.let {
+                    val slides = ArrayList<SlideModel>()
+                    slides.add(SlideModel(R.drawable.banner_shoes))
+                    slides.add(SlideModel(R.drawable.banner_shoes))
+                    slides.add(SlideModel(R.drawable.banner_shoes))
+                    it.setImageList(slides, ScaleTypes.FIT)
+                    it.visibility = View.VISIBLE
+                }
             }
         }, 1000)
     }
+
     override fun onItemClick(data: ProductItem) {
+        recyclerViewState = binding.rvVertical.layoutManager?.onSaveInstanceState()
         Log.d("Item clicked", "Product item clicked")
         val bundle = bundleOf("item" to data)
         findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        recyclerViewState = binding.rvVertical.layoutManager?.onSaveInstanceState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        recyclerViewState?.let {
+            binding.rvVertical.layoutManager?.onRestoreInstanceState(it)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null  // Set binding to null to prevent memory leaks
     }
 }
