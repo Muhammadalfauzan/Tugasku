@@ -1,31 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:paddingStart="16dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    >
 
+    <!-- Circle Image for Icon -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/cat_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/women_clothing"
         app:civ_border_color="#FFFFFF"
+        app:civ_border_width="2dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp"/>
 
+    <!-- Description Text -->
     <TextView
         android:id="@+id/tv_desc"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_semi_bold"
-        android:textSize="12sp"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/cat_image"
-        app:layout_constraintTop_toBottomOf="@+id/cat_image"
-        tools:ignore="SmallSp"
-        tools:text="Testing" />
-
+        android:text="men`s clothing"
+        android:textSize="14sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:fontFamily="@font/poppins_regular"
+        android:maxLines="2"
+        app:layout_constraintTop_toBottomOf="@id/cat_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

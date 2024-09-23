@@ -101,6 +101,13 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
+    implementation( "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // encrypted
+    implementation ("androidx.security:security-crypto:1.1.0-alpha06")
+
+    //Lottie
+    implementation (libs.lottie)
 }
     kapt {
         correctErrorTypes =  true

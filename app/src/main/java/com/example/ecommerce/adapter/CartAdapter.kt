@@ -2,18 +2,14 @@ package com.example.ecommerce.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.ecommerce.R
 import com.example.ecommerce.database.cart.Cart
 import com.example.ecommerce.databinding.ItemCartBinding
 import com.example.ecommerce.viewmodel.CartViewModel
-import com.google.android.material.snackbar.Snackbar
 
 class CartAdapter(
     private val cartViewModel: CartViewModel
@@ -21,9 +17,16 @@ class CartAdapter(
 
     private var cartItems: List<Cart> = emptyList()
 
+    fun getCartItemAt(position: Int): Cart {
+        return cartItems[position]
+    }
+
+    fun deleteCartItem(cartItem: Cart) {
+        cartViewModel.deleteCartItemById(cartItem.id.toLong())
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
-        val binding =
-            ItemCartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemCartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CartViewHolder(binding)
     }
 
@@ -32,22 +35,21 @@ class CartAdapter(
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val currentItem = cartItems[position]
         holder.bind(currentItem)
-
-        // Handle delete action
+/*
+        // Set up delete button click listener
         holder.ivDelete.setOnClickListener {
             cartViewModel.deleteCartItemById(currentItem.id.toLong())
-            showSnackBar(holder.itemView)
-        }
+            notifyItemRemoved(position)
+        }*/
 
-        // Handle increase quantity
-        holder.btPlus.setOnClickListener {
+    holder.btPlus.setOnClickListener {
             val newAmount = currentItem.quantity + 1
             currentItem.quantity = newAmount
             cartViewModel.updateCart(currentItem)
             holder.tvNumber.text = newAmount.toString()
         }
 
-        // Handle decrease quantity
+
         holder.btMin.setOnClickListener {
             if (currentItem.quantity > 1) {
                 val newAmount = currentItem.quantity - 1
@@ -60,20 +62,21 @@ class CartAdapter(
 
     class CartViewHolder(private val binding: ItemCartBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        val ivDelete: ImageView = binding.btnDelete
+     /*   val ivDelete: ImageView = binding.iconDelete*/
         val btPlus: Button = binding.btnIncrement
-        val btMin: Button = binding.btnIncrement
+        val btMin: Button = binding.btnDecrement
         val tvNumber: TextView = binding.tvQuantity
 
+
+        @SuppressLint("DefaultLocale")
         fun bind(cartItem: Cart) {
             Glide.with(itemView.context)
                 .load(cartItem.image)
                 .into(binding.imgProduct)
 
             binding.tvProductName.text = cartItem.title
-            binding.tvProductPrice.text = "Rp ${cartItem.price ?: 0}"
-            binding.tvQuantity.text = cartItem.quantity.toString()
+            binding.tvProductPrice.text = String.format("$ %.2f", cartItem.price ?: 0.0)
+            binding.tvQuantity.text = cartItem.quantity.toString()  // Show the current quantity
         }
     }
 
@@ -83,7 +86,6 @@ class CartAdapter(
         notifyDataSetChanged()
     }
 
-    private fun showSnackBar(view: View) {
-        Snackbar.make(view, "Item removed from the cart", Snackbar.LENGTH_SHORT).show()
-    }
 }
+
+

@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.ecommerce.utils.SharedPreferencesUser
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -16,46 +17,72 @@ class LoginViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : AndroidViewModel(application) {
 
-    // LiveData to track authentication state
+
     val authState = MutableLiveData<Boolean>()
     val userDisplayName = MutableLiveData<String>()
     val userEmail = MutableLiveData<String>()
     val userPhotoUrl = MutableLiveData<String>()
 
-    // Fungsi untuk mengautentikasi Google Sign-In dengan Firebase
+    val sharedPreferencesManager = SharedPreferencesUser(getApplication<Application>())
     fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        Log.d("LoginViewModel", "GoogleSignInAccount received: ${account.displayName}, ${account.email}, ${account.idToken}")
+
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                // Jika login berhasil, update LiveData dengan informasi user
-                authState.value = true
+                Log.d("LoginViewModel", "Firebase Sign-In successful")
+
+                // simpan informasi user
                 val user = firebaseAuth.currentUser
-                userDisplayName.value = user?.displayName
-                userEmail.value = user?.email
-                userPhotoUrl.value = user?.photoUrl.toString()
+
+                if (user != null) {
+                    Log.d("LoginViewModel", "Firebase User info: Name=${user.displayName}, Email=${user.email}, Photo=${user.photoUrl}")
+
+                    authState.value = true
+                    userDisplayName.value = user.displayName
+                    userEmail.value = user.email
+                    userPhotoUrl.value = user.photoUrl.toString()
+
+                    // Simpan data user ke EncryptedSharedPreferences
+                    sharedPreferencesManager.saveLoginStatus(true)
+                    sharedPreferencesManager.saveUserEmail(user.email ?: "")
+                    sharedPreferencesManager.saveUserDisplayName(user.displayName ?: "")
+                    sharedPreferencesManager.saveUserPhotoUrl(user.photoUrl.toString() ?: "")
+                } else {
+                    Log.e("LoginViewModel", "Firebase User is null after sign-in")
+                }
             } else {
-                authState.value = false
                 Log.e("LoginViewModel", "Login Failed: ${task.exception?.message}")
+                authState.value = false
             }
         }
     }
 
-    // Cek apakah user sudah login sebelumnya
+    // Cek user sudah login
     fun checkIfUserIsLoggedIn() {
-        val user = firebaseAuth.currentUser
-        if (user != null) {
+        val isLoggedIn = sharedPreferencesManager.getLoginStatus()
+        Log.d("EncryptedPrefs", "Login status saved: true")
+        if (isLoggedIn) {
+            Log.d("LoginViewModel", "User is already logged in")
+
             authState.value = true
-            userDisplayName.value = user.displayName
-            userEmail.value = user.email
-            userPhotoUrl.value = user.photoUrl.toString()
+            userDisplayName.value = sharedPreferencesManager.getUserDisplayName()
+            Log.d("EncryptedPrefs", "User display name loaded: $userDisplayName")
+            userEmail.value = sharedPreferencesManager.getUserEmail()
+            Log.d("EncryptedPrefs", "User photo URL loaded: $userEmail")
+            userPhotoUrl.value = sharedPreferencesManager.getUserPhotoUrl()
+            Log.d("EncryptedPrefs", "User photo URL loaded: $userPhotoUrl")
         } else {
+            Log.d("LoginViewModel", "No user is currently logged in")
             authState.value = false
         }
     }
 
-    // Fungsi untuk Logout
     fun signOut() {
+        Log.d("LoginViewModel", "User signed out")
         firebaseAuth.signOut()
+
+        sharedPreferencesManager.clearUserData()
         authState.value = false
     }
 }

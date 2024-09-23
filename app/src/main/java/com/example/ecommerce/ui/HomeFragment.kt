@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -53,6 +54,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         observeCategories()
         observeProducts()
         readDataProduct()
+        onBackPressed()
         productViewModel.getCategory()
         productViewModel.getListMenu()
 
@@ -64,7 +66,8 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
             categoryAdapter = CategoryAdapter()
             binding.rvHorizontal.apply {
                 adapter = categoryAdapter
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                binding.rvHorizontal.layoutManager = layoutManager
             }
 
             productAdapter = ProductAdapter(this)
@@ -181,6 +184,18 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         Log.d("Item clicked", "Product item clicked")
         val bundle = bundleOf("item" to data)
         findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle)
+    }
+
+    private fun onBackPressed() {
+        val navController = findNavController()
+        requireActivity()
+            .onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                if (navController.currentDestination?.id == R.id.homeFragment) {
+                    requireActivity().finish()
+                } else {
+                    navController.navigateUp()
+                }
+            }
     }
 
     override fun onPause() {

@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+
+>
 
     <!-- Image of Product -->
     <ImageView
         android:id="@+id/img_product"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="@dimen/spacing_16dp"
         android:layout_marginEnd="8dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toStartOf="@+id/text_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/tass" />
 
     <!-- Text Container for Title, Size, and Price -->
@@ -37,18 +38,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Brown Jacket"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            tools:text="Brown Jacket" />
-
-        <!-- Product Size -->
-        <TextView
-            android:id="@+id/tv_product_size"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Size: XL"
             android:textSize="14sp"
-            tools:text="Size: XL" />
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_semi_bold"
+            tools:text="Brown Jacket" />
 
         <!-- Product Price -->
         <TextView
@@ -68,6 +62,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layout_marginEnd="@dimen/spacing_16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -126,15 +121,18 @@
             app:strokeWidth="2dp"
             android:gravity="center" />
 
-        <!-- Delete Icon -->
-        <ImageButton
-            android:id="@+id/btn_delete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/baseline_delete_24"
-            android:contentDescription="delete"
-            app:tint="#F44336" />
     </LinearLayout>
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="18dp"
+        android:background="@color/dark_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_product"
+        tools:ignore="UseAppTint" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

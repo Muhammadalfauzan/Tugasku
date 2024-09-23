@@ -35,6 +35,9 @@ class DetailViewModel @Inject constructor(
         _selectedItem.value = item
         _totalPrice.value = item.price.toDouble() // Initialize total price with the base price
     }
+    fun clearTotalPrice(item: Double) {
+        _totalPrice.value = item
+    }
 
     // Update quantity and recalculate total price based on the new quantity
     fun setCurrentAmount(amount: Int) {

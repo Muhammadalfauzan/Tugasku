@@ -2,22 +2,23 @@ package com.example.ecommerce.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.ecommerce.R
 import com.example.ecommerce.data.apimodel.ProductItem
 import com.example.ecommerce.database.cart.Cart
 import com.example.ecommerce.databinding.FragmentDetailBinding
-import com.example.ecommerce.databinding.FragmentHomeBinding
 import com.example.ecommerce.viewmodel.CartViewModel
 import com.example.ecommerce.viewmodel.DetailViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
@@ -47,11 +48,11 @@ class DetailFragment : Fragment() {
 
         // Setup tombol "Add to Cart"
         addToCart()
-
+        iconBackClicked()
         return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun setDataProduct() {
         item?.let {
             Glide.with(requireContext())
@@ -62,10 +63,8 @@ class DetailFragment : Fragment() {
             binding.tvNameProduct.text = it.title
             binding.tvTotalPrice.text = String.format("%.2f", it.price)
             binding.tvDescription.text = it.description
-            it.rating?.let { rating ->
+            it.rating.let { rating ->
                 binding.tvRatting.text = "${rating.rate ?: "N/A"} / 5 (${rating.count ?: 0} reviews)"
-            } ?: run {
-                binding.tvRatting.text = "N/A"
             }
         }
     }
@@ -88,8 +87,43 @@ class DetailFragment : Fragment() {
 
                 // Panggil addToCart dari CartViewModel
                 cartViewModel.addToCart(cartItem)
+
+                showItemAddedSnackBar()
             }
         }
+    }
+    @Suppress("DEPRECATION")
+    private fun iconBackClicked() {
+        binding.ivBack.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showItemAddedSnackBar() {
+        val inflater = LayoutInflater.from(requireContext())
+        val customView = inflater.inflate(R.layout.item_added_snackbar, null)
+
+        val snackBar = Snackbar.make(binding.btCart, "", Snackbar.LENGTH_SHORT)
+        val snackBarView = snackBar.view
+
+        val snackBarLayout = snackBarView as ViewGroup
+        snackBarLayout.removeAllViews() // Clear existing views
+        snackBarLayout.addView(customView) // Add custom view
+
+        customView.setOnClickListener {
+            val action = DetailFragmentDirections.actionDetailFragmentToCartFragment()
+            findNavController().navigate(action)
+            snackBar.dismiss()
+        }
+
+        snackBar.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        detailViewModel.setCurrentAmount(1)
+        item?.let { detailViewModel.clearTotalPrice(it.price) }
     }
 }
 

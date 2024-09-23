@@ -14,9 +14,9 @@ class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.MyViewHolder>() {
     // Peta gambar lokal berdasarkan kategori
     private val categoryImages = mapOf(
         "electronics" to R.drawable.img,
-        "jewelery" to R.drawable.img,
-        "men's clothing" to R.drawable.img,
-        "women's clothing" to R.drawable.img
+        "jewelery" to R.drawable.jewelry,
+        "men's clothing" to R.drawable.mens_clothing,
+        "women's clothing" to R.drawable.women_clothing
     )
 
     private var categories = emptyList<String>()

@@ -12,14 +12,14 @@
 
     <ImageView
         android:id="@+id/iv_image"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="300dp"
-        android:layout_marginTop="10dp"
         android:importantForAccessibility="no"
         android:src="@drawable/tass"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_fav"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/iv_back"
+        app:layout_constraintTop_toBottomOf="@+id/iv_back"
         tools:ignore="ImageContrastCheck" />
 
     <ImageView
@@ -73,15 +73,14 @@
         style="@style/MyCardView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="300dp"
         android:backgroundTint="@color/white"
         android:fitsSystemWindows="true"
         app:cardElevation="0dp"
-
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/iv_image"
+        app:layout_constraintTop_toBottomOf="@+id/iv_image"
         app:strokeColor="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,9 +93,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_regular"
                 android:text="clothing"
                 android:textSize="14sp"
-               android:fontFamily="@font/poppins_regular"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -122,7 +121,6 @@
                 tools:ignore="TextSizeCheck" />
 
 
-
             <TextView
                 android:id="@+id/tv_nameProduct"
                 android:layout_width="match_parent"
@@ -130,22 +128,21 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="15dp"
-                android:text="Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops"
                 android:fontFamily="@font/poppins_semi_bold"
+                android:text="Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_category" />
-
 
 
             <TextView
                 android:id="@+id/tv_productDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semi_bold"
                 android:text="Product Detail"
                 android:textSize="14sp"
-                android:fontFamily="@font/poppins_semi_bold"
-                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="@+id/tv_nameProduct"
                 app:layout_constraintTop_toBottomOf="@+id/tv_nameProduct" />
 
@@ -153,9 +150,9 @@
                 android:id="@+id/tv_description"
                 android:layout_width="360dp"
                 android:layout_height="wrap_content"
-                android:text="Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday"
-                android:fontFamily="@font/poppins_regular"
                 android:layout_marginTop="12dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday"
                 app:layout_constraintStart_toStartOf="@+id/tv_productDetail"
                 app:layout_constraintTop_toBottomOf="@+id/tv_productDetail" />
 
@@ -174,10 +171,10 @@
                 android:id="@+id/tv_selectSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/poppins_semi_bold"
                 android:text="Select Size"
                 android:textSize="14sp"
-                android:fontFamily="@font/poppins_semi_bold"
-                android:layout_marginTop="12dp"
                 app:layout_constraintStart_toStartOf="@+id/divider3"
                 app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
@@ -185,9 +182,9 @@
                 android:id="@+id/tv_lbTotalPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="Total Price"
                 android:textSize="14sp"
-                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/bt_cart" />
 
@@ -215,17 +212,17 @@
                 android:id="@+id/bt_cart"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="#704f38"
                 android:fontFamily="@font/poppins_regular"
-                android:text="Add to Cart"
-                android:layout_marginStart="50dp"
-                android:textSize="16sp"
                 android:gravity="center"
+                android:text="Add to Cart"
+                android:textSize="16sp"
                 app:icon="@drawable/bag"
-                app:iconTint="@android:color/white"
                 app:iconGravity="textStart"
+                app:iconTint="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tv_lbTotalPrice"
