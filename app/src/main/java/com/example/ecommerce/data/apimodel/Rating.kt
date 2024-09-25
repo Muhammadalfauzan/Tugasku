@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Rating(
-    val count: Int?,
-    val rate: Double?
+    val count: Int = 0,
+    val rate: Double = 0.0
+
 ) : Parcelable

@@ -22,6 +22,9 @@ class LocalDataSource @Inject constructor(
         productDao.insertProduct(product)
     }
 
+    fun searchProductsByLabel(label: String): List<ProductItems> {
+        return productDao.searchProductsByLabel(label)
+    }
     /** CART **/
 
     suspend fun insertCart(cartItem: Cart) {
@@ -48,6 +51,7 @@ class LocalDataSource @Inject constructor(
     suspend fun getCartItemById(cartId: Int): Cart? {
         return cartDao.getCartItemById(cartId)
     }
+
 
 
     suspend fun addOrUpdateCartItem(cartItem: Cart) {

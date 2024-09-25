@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
@@ -17,11 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
-import com.example.ecommerce.ItemDecorationRv
 import com.example.ecommerce.R
 import com.example.ecommerce.adapter.CategoryAdapter
 import com.example.ecommerce.adapter.ProductAdapter
@@ -55,12 +53,18 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         observeProducts()
         readDataProduct()
         onBackPressed()
+        setupSearchButton()
         productViewModel.getCategory()
         productViewModel.getListMenu()
 
         return binding.root
     }
-
+    private fun setupSearchButton() {
+        binding.searchView.setOnClickListener {
+            /*throw RuntimeException("Test Crash") // Force a crash*/
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+        }
+    }
     private fun setupRecyclerViews() {
         _binding?.let { binding ->
             categoryAdapter = CategoryAdapter()
@@ -86,6 +90,31 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         }
     }
 
+    private fun observeProducts() {
+        productViewModel.listMenuResponse.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is NetworkResult.Loading -> {
+                    Log.d("HomeFragment", "Loading products...")
+                }
+                is NetworkResult.Success -> {
+                    response.data?.let { products ->
+                        productAdapter.setData(products)
+
+                        recyclerViewState?.let {
+                            val layoutManager = _binding?.rvVertical?.layoutManager as GridLayoutManager
+                            layoutManager.onRestoreInstanceState(it)
+                        }
+                    }
+                }
+                is NetworkResult.Error -> {
+                    loadMenuFromCache()
+                    Log.e("HomeFragment", "Error fetching products: ${response.message}")
+                    Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun observeCategories() {
         _binding?.let {
             productViewModel.categoryResponse.observe(viewLifecycleOwner) { response ->
@@ -107,37 +136,11 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         }
     }
 
-    private fun observeProducts() {
-        _binding?.let { binding ->
-            productViewModel.listMenuResponse.observe(viewLifecycleOwner) { response ->
-                when (response) {
-                    is NetworkResult.Loading -> {
-                        Log.d("HomeFragment", "Loading products...")
-                    }
-                    is NetworkResult.Success -> {
-                        response.data?.let { products ->
-                            productAdapter.setData(products)
-                            recyclerViewState?.let {
-                                val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
-                                layoutManager.onRestoreInstanceState(it)
-                            }
-                        }
-                    }
-                    is NetworkResult.Error -> {
-                        loadMenuFromCache()
-                        Log.e("HomeFragment", "Error fetching products: ${response.message}")
-                        Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-    }
-
     private fun loadMenuFromCache() {
         _binding?.let {
-            productViewModel.readProduct.observe(viewLifecycleOwner) { database ->
-                if (database.isNotEmpty()) {
-                    productAdapter.setData(database.first().listProductResponse)
+            productViewModel.getConvertedProductItems().observe(viewLifecycleOwner) { products ->
+                if (products.isNotEmpty()) {
+                    productAdapter.setData(products) // Data sudah dikonversi menjadi ProductItem
                     recyclerViewState?.let {
                         val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
                         layoutManager.onRestoreInstanceState(it)
@@ -150,9 +153,9 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
     private fun readDataProduct() {
         _binding?.let {
             lifecycleScope.launch {
-                productViewModel.readProduct.observe(viewLifecycleOwner) { database ->
-                    if (database.isNotEmpty()) {
-                        productAdapter.setData(database.first().listProductResponse)
+                productViewModel.getConvertedProductItems().observe(viewLifecycleOwner) { products ->
+                    if (products.isNotEmpty()) {
+                        productAdapter.setData(products) // Data sudah dikonversi menjadi ProductItem
                         recyclerViewState?.let {
                             val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
                             layoutManager.onRestoreInstanceState(it)

@@ -27,6 +27,7 @@ class DetailFragment : Fragment() {
     private val detailViewModel: DetailViewModel by viewModels()
     private val cartViewModel : CartViewModel by viewModels()
     private var item: ProductItem? = null
+    private lateinit var snackBar: Snackbar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -104,7 +105,7 @@ class DetailFragment : Fragment() {
         val inflater = LayoutInflater.from(requireContext())
         val customView = inflater.inflate(R.layout.item_added_snackbar, null)
 
-        val snackBar = Snackbar.make(binding.btCart, "", Snackbar.LENGTH_SHORT)
+        snackBar = Snackbar.make(binding.btCart, "", Snackbar.LENGTH_SHORT)
         val snackBarView = snackBar.view
 
         val snackBarLayout = snackBarView as ViewGroup
@@ -122,6 +123,10 @@ class DetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        if (this::snackBar.isInitialized && snackBar.isShown) {
+            snackBar.dismiss()
+        }
         detailViewModel.setCurrentAmount(1)
         item?.let { detailViewModel.clearTotalPrice(it.price) }
     }

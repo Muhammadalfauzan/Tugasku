@@ -13,4 +13,7 @@ interface ProductDao {
 
     @Query("SELECT * FROM product_table ORDER BY id ASC")
     fun readProduct(): Flow<List<ProductItems>>
+
+    @Query("SELECT * FROM product_table WHERE title LIKE '%' || :label || '%' OR description LIKE '%' || :label || '%'")
+    fun searchProductsByLabel(label: String): List<ProductItems>
 }

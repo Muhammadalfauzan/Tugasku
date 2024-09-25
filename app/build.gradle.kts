@@ -5,7 +5,8 @@ plugins {
     id ("kotlin-parcelize")
     id ("androidx.navigation.safeargs")
     id ("com.google.dagger.hilt.android")
-    id("com.google.gms.google-services")
+    id ("com.google.gms.google-services")
+    id ("com.google.firebase.crashlytics")
 }
 
 android {
@@ -59,52 +60,56 @@ dependencies {
 
 
     //Navigation Component
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.8.0")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.8.0")
+    implementation (libs.androidx.navigation.fragment.ktx)
+    implementation (libs.androidx.navigation.ui.ktx)
 
     //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.52")
-    annotationProcessor("com.google.dagger:hilt-compiler:2.52")
+    implementation(libs.dagger.hilt.android.v252)
+    annotationProcessor(libs.dagger.hilt.compiler.v252)
 
-    implementation("com.google.dagger:hilt-android:2.52")
-    kapt("com.google.dagger:hilt-compiler:2.52")
+    implementation(libs.dagger.hilt.android.v252)
+    kapt(libs.dagger.hilt.compiler.v252)
 
     //circle
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation (libs.circleimageview)
 
     //Glide
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    kapt ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation (libs.glide)
+    kapt (libs.compiler)
 
     // Room database
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     //Live Data
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.5")
+    implementation (libs.androidx.lifecycle.livedata.ktx)
 
     //slider
-    implementation ("com.github.denzcoskun:ImageSlideshow:0.1.2")
+    implementation (libs.imageslideshow)
 
     //okHTTP
     implementation(libs.logging.interceptor)
 
-    // Import the Firebase BoM
+    // Firebase
 
-    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.play.services.auth)
+    implementation(libs.firebase.crashlytics)
 
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    implementation( "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation( libs.androidx.swiperefreshlayout)
 
     // encrypted
-    implementation ("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation (libs.androidx.security.crypto)
+
+    //ML Kit
+    implementation (libs.image.labeling)
+
 
     //Lottie
     implementation (libs.lottie)

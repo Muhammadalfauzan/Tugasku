@@ -28,6 +28,31 @@
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/search_bar"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="@color/grey"
+        android:elevation="10dp"
+        android:hint="Search"
+        app:layout_constraintEnd_toStartOf="@+id/search_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feeling2" />
+
+    <ImageButton
+        android:id="@+id/search_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_16dp"
+        android:src="@drawable/outline_photo_camera_24"
+        android:background="@drawable/bg_notif"
+    app:layout_constraintBottom_toBottomOf="@+id/search_bar"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/search_bar"
+    android:text="Gallery" />
+
+
     <TextView
         android:id="@+id/feeling"
         android:layout_width="wrap_content"
