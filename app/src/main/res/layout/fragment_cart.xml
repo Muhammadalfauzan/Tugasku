@@ -6,16 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.CartFragment">
 
-   <!-- <ImageView
+    <ImageView
         android:id="@+id/iv_empty"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="65dp"
+
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_cart_empty"
-        android:visibility="gone"
-        app:tint="@color/orange_dark" />
+        android:src="@drawable/empty_cart"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_awe"
@@ -23,17 +22,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="30dp"
-        android:text="@string/oopss"
+        android:text="Oopss"
+        android:layout_marginTop="170dp"
         android:textSize="20sp"
+        android:fontFamily="@font/poppins_semi_bold"
         android:textStyle="bold"
-        android:visibility="gone" />-->
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_no_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="there_is_no"
+        android:layout_marginTop="170dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Currently there is no item in your cart"
         android:visibility="gone"
         tools:ignore="TextSizeCheck" />
 

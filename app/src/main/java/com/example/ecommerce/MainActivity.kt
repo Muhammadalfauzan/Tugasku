@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.detailFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                 }
+                R.id.searchFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE  // Sembunyikan saat SearchFragment terbuka
+                }
                 else -> {
                     binding.bottomNavigationView.visibility = View.VISIBLE
                 }

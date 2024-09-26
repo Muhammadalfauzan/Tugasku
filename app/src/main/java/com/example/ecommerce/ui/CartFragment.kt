@@ -41,11 +41,30 @@ class CartFragment : Fragment() {
         binding.rvCart.layoutManager = LinearLayoutManager(requireContext())
         binding.rvCart.adapter = cartAdapter
 
+        checkCart()
         observeCartItems()
         observeTotalPrice()
         onBackPressed()
         enableSwipeToDelete(binding.rvCart, cartAdapter)
         return binding.root
+    }
+
+    private fun checkCart() {
+        cartViewModel.allCartItems.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.tvAwe.visibility = View.VISIBLE
+                binding.tvNoItem.visibility = View.VISIBLE
+                binding.ivEmpty.visibility = View.VISIBLE
+                binding.rvCart.visibility = View.GONE
+            } else {
+                binding.tvAwe.visibility = View.GONE
+                binding.tvNoItem.visibility = View.GONE
+                binding.ivEmpty.visibility = View.GONE
+                binding.rvCart.visibility = View.VISIBLE
+                cartAdapter.setData(it)
+            }
+
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -66,6 +85,7 @@ class CartFragment : Fragment() {
             }
         }
     }
+
     private fun enableSwipeToDelete(recyclerView: RecyclerView, adapter: CartAdapter) {
         val swipeToDeleteCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(

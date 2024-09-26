@@ -1,79 +1,83 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
     android:layout_margin="8dp">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:padding="8dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
-<ImageView
-    android:id="@+id/iv_product"
-    android:layout_width="0dp"
-android:layout_height="130dp"
-android:contentDescription="product image"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toTopOf="parent"
-android:src="@drawable/img" />
+        <ImageView
+            android:id="@+id/iv_product"
+            android:layout_width="0dp"
+            android:layout_height="130dp"
+            android:contentDescription="product image"
+            android:src="@drawable/img"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="1" />
 
-<TextView
-    android:id="@+id/tv_descProduct"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:ellipsize="end"
-    android:maxLines="1"
-    android:paddingStart="5dp"
-    android:textColor="@color/black"
-    android:textSize="12sp"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/iv_product"
-    tools:text="Samsung 49-Inch CHG90 144Hz" />
+        <TextView
+            android:id="@+id/tv_descProduct"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="5dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_product"
+            app:layout_constraintWidth_percent="1"
+            tools:text="Samsung 49-Inch CHG90 144Hz" />
 
-<TextView
-    android:id="@+id/tv_price"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="1000"
-    android:textSize="14sp"
-    android:textStyle="bold"
-    app:layout_constraintStart_toEndOf="@+id/tv_rp"
-    app:layout_constraintTop_toTopOf="@+id/tv_rp" />
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tv_rp"
+            app:layout_constraintTop_toTopOf="@+id/tv_rp" />
 
-<TextView
-    android:id="@+id/tv_rp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="5dp"
-    android:text="$"
-    android:textColor="@color/black"
-    android:textSize="14sp"
-    app:layout_constraintStart_toStartOf="@+id/tv_descProduct"
-    app:layout_constraintTop_toBottomOf="@+id/tv_descProduct" />
+        <TextView
+            android:id="@+id/tv_rp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="$"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_descProduct"
+            app:layout_constraintTop_toBottomOf="@+id/tv_descProduct" />
 
-<ImageView
-    android:id="@+id/img_star"
-    android:layout_width="16dp"
-    android:layout_height="16dp"
-    android:layout_marginStart="3dp"
-    android:src="@drawable/ic_star"
-    app:tint="#FFC20D"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/tv_price" />
+        <ImageView
+            android:id="@+id/img_star"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="3dp"
+            android:src="@drawable/ic_star"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price"
+            app:tint="#FFC20D" />
 
-<TextView
-    android:id="@+id/tv_ratting"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="4.8"
-    android:contentDescription="Product rating"
-    android:textSize="12dp"
-    app:layout_constraintStart_toEndOf="@+id/img_star"
-    app:layout_constraintTop_toTopOf="@+id/img_star" />
-</androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tv_ratting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Product rating"
+            android:text="4.8"
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/img_star"
+            app:layout_constraintTop_toTopOf="@+id/img_star" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

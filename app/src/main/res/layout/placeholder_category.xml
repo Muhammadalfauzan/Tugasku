@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="40dp"
+        android:layout_marginStart="10dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_name"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="@+id/category_image"
+        app:layout_constraintStart_toStartOf="@+id/category_image"
+        app:layout_constraintTop_toBottomOf="@+id/category_image" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_image2"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="10dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="40dp"
+        app:cardElevation="4dp"
+        app:layout_constraintStart_toEndOf="@+id/category_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_name2"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="@+id/category_image2"
+        app:layout_constraintStart_toStartOf="@+id/category_image2"
+        app:layout_constraintTop_toBottomOf="@+id/category_image2" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_image3"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="40dp"
+        android:layout_marginStart="10dp"
+        app:cardElevation="4dp"
+        app:layout_constraintStart_toEndOf="@+id/category_name2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_name3"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="@+id/category_image3"
+        app:layout_constraintStart_toStartOf="@+id/category_image3"
+        app:layout_constraintTop_toBottomOf="@+id/category_image3" />
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_image4"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="40dp"
+        app:cardElevation="4dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@+id/category_name3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/category_name4"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:backgroundTint="@color/light_grey"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="@+id/category_image4"
+        app:layout_constraintStart_toStartOf="@+id/category_image4"
+        app:layout_constraintTop_toBottomOf="@+id/category_image4" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

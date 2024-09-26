@@ -19,9 +19,22 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+#keep,allowobfuscation,allowshrinking class kotlinx.coroutines { *; }
+#dontwarn org.jetbrains.kotlinx.**
+#keepclassmembernames class kotlinx.** {
+#   volatile <fields>;
+#}
 
-# Dagger Hilt
--keep class dagger.** {*;}
--keep class javax.inject.** {*;}
--keep class com.example.ecommerce.DaggerMyApplication_HiltComponents_SingletonC$Builder { *; }
--printmapping mapping.txt
+#keep class kotlinx.coroutines.android.AndroidExceptionPreHandler
+#keep class kotlinx.coroutines.android.AndroidDispatcherFactory
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+-keep class com.example.ecommerce.data.apimodel.DataCategory { *; }
+-keep class com.example.ecommerce.data.apimodel.Product { *; }
+
+-keep class com.facebook.android.*
+-keep class android.webkit.WebViewClient
+-keep class * extends android.webkit.WebViewClient
+-keepclassmembers class * extends android.webkit.WebViewClient {
+    <methods>;
+}

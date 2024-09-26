@@ -1,6 +1,5 @@
 package com.example.ecommerce.viewmodel
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -40,7 +39,6 @@ class ProductViewModel @Inject constructor(
 
     /** Database Room **/
     val readProduct: LiveData<List<ProductItems>> = repository.local.readProduct().asLiveData()
-    val labelsLiveData: MutableLiveData<List<String>> = MutableLiveData()
 
     /** ML Kit Search Labeling **/
     var searchResultResponse: MutableLiveData<List<ProductItem>> = MutableLiveData()
@@ -57,9 +55,11 @@ class ProductViewModel @Inject constructor(
 
         labeler.process(image)
             .addOnSuccessListener { labels ->
+
                 val labelList = labels.map { it.text }
+                Log.d("ImageLabeling", "Labels received: $labelList")
                 searchProductsByLabels(labelList)
-                Log.e("Labelist","title")
+
 
             }
             .addOnFailureListener {
@@ -74,7 +74,7 @@ class ProductViewModel @Inject constructor(
                 Log.d("SearchLabel", "Searching products for label: $label")
 
                 val products = repository.local.searchProductsByLabel(label)
-                Log.d("SearchLabel", "Found products: ${products.size} for label: $label")
+                Log.d("SearchLabel", "Found products for label '$label': ${products.map { it.title }}")
 
                 filteredProducts.addAll(products.map { convertToProductItem(it) })
             }

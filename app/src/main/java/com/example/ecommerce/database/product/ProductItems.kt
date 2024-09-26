@@ -7,8 +7,8 @@ import com.example.ecommerce.database.ProductTypeConverter
 
 
 @Entity(tableName = "product_table")
-@TypeConverters(ProductTypeConverter::class) // Ensure TypeConverter is referenced
-class ProductItems( // Change to a data class
+
+class ProductItems(
     @PrimaryKey(autoGenerate = false)
     var id: Int = 0,
     val title: String,

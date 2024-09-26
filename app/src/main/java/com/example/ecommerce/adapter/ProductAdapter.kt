@@ -15,18 +15,23 @@ import com.example.ecommerce.utils.ProductDiffutil
 
 class ProductAdapter(
     private val listener: OnItemClickListener? = null
-) : RecyclerView.Adapter<ProductAdapter.MyViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var products = emptyList<ProductItem>()
+    private var isLoading = true // Menandai apakah shimmer sedang ditampilkan
 
-    // ViewHolder to bind data to the view
+    companion object {
+        private const val VIEW_TYPE_SHIMMER = 0
+        private const val VIEW_TYPE_ITEM = 1
+    }
+
+    // ViewHolder untuk item asli
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val productName: TextView = itemView.findViewById(R.id.tv_descProduct)
         private val productImage: ImageView = itemView.findViewById(R.id.iv_product)
         private val productPrice: TextView = itemView.findViewById(R.id.tv_price)
         private val productRating: TextView = itemView.findViewById(R.id.tv_ratting)
 
-        // Bind the product data to the views
         @SuppressLint("SetTextI18n", "DefaultLocale")
         fun bind(product: ProductItem) {
             productName.text = product.title.replaceFirstChar {
@@ -34,8 +39,7 @@ class ProductAdapter(
             }
 
             Glide.with(itemView.context)
-                .load(product.image) // Use the image URL from the product
-                /* .placeholder(R.drawable.placeholder)*/ // Optionally, add a placeholder image
+                .load(product.image)
                 .into(productImage)
 
             productPrice.text = String.format("%.2f", product.price)
@@ -46,46 +50,74 @@ class ProductAdapter(
                 "No rating available"
             }
             productRating.text = ratingText
-
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_product, parent, false)
-        return MyViewHolder(view)
+    // ViewHolder untuk shimmer loading
+    class ShimmerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val shimmerFrameLayout: com.facebook.shimmer.ShimmerFrameLayout =
+            itemView.findViewById(R.id.shimmerFrame)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_ITEM
+    }
 
-    override fun getItemCount(): Int = products.size
-
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val currentProduct = products[position]
-        holder.bind(currentProduct)
-
-        holder.itemView.setOnClickListener {
-            listener?.onItemClick(currentProduct)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_SHIMMER) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.placeholder_product, parent, false)
+            ShimmerViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product, parent, false)
+            MyViewHolder(view)
         }
     }
 
-
-    interface OnItemClickListener {
-        fun onItemClick(data: ProductItem)
+    override fun getItemCount(): Int {
+        return if (isLoading) 10 else products.size // Misal menampilkan 10 shimmer item saat loading
     }
 
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ShimmerViewHolder) {
+            // Memulai shimmer effect
+            holder.shimmerFrameLayout.startShimmer()
+        } else if (holder is MyViewHolder) {
+            val currentProduct = products[position]
+            holder.bind(currentProduct)
+            holder.itemView.setOnClickListener {
+                listener?.onItemClick(currentProduct)
+            }
+        }
+    }
 
     fun setData(newData: List<ProductItem>) {
         val productDiffUtil = ProductDiffutil(products, newData)
         val diffUtilResult = DiffUtil.calculateDiff(productDiffUtil)
         products = newData
+        isLoading = false // Data sudah tersedia, sembunyikan shimmer
         diffUtilResult.dispatchUpdatesTo(this)
     }
 
+    fun showShimmerEffect() {
+        isLoading = true // Mengaktifkan shimmer
+        notifyDataSetChanged()
+    }
+
+    fun hideShimmerEffect() {
+        isLoading = false // Menonaktifkan shimmer
+        notifyDataSetChanged()
+    }
 
     fun clearData() {
         val diffCallback = ProductDiffutil(products, emptyList())
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         products = emptyList()
+        isLoading = true // Kembali ke shimmer mode
         diffResult.dispatchUpdatesTo(this)
     }
 
+    interface OnItemClickListener {
+        fun onItemClick(data: ProductItem)
+    }
 }
+

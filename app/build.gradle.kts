@@ -12,7 +12,6 @@ plugins {
 android {
     namespace = "com.example.ecommerce"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "com.example.ecommerce"
         minSdk = 27
@@ -24,16 +23,24 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        mlModelBinding = true
     }
 
     buildTypes {
-        release {
+ /*       release {
             isMinifyEnabled = true
             isShrinkResources =true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }*/
+
+        debug {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -110,9 +117,11 @@ dependencies {
     //ML Kit
     implementation (libs.image.labeling)
 
-
     //Lottie
     implementation (libs.lottie)
+
+    //Shimer Efek
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
 }
     kapt {
         correctErrorTypes =  true

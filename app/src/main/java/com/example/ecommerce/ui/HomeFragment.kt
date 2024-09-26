@@ -1,15 +1,18 @@
 package com.example.ecommerce.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Parcelable
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
@@ -53,16 +56,35 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         observeProducts()
         readDataProduct()
         onBackPressed()
-        setupSearchButton()
+        searchButton()
         productViewModel.getCategory()
         productViewModel.getListMenu()
 
         return binding.root
     }
-    private fun setupSearchButton() {
+    private fun searchButton() {
         binding.searchView.setOnClickListener {
-            /*throw RuntimeException("Test Crash") // Force a crash*/
-            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+            pickImageFromGallery()
+        }
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, 1000)
+    }
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK && data != null) {
+            val imageUri = data.data
+
+            // Kirim URI gambar ke SearchFragment menggunakan Bundle
+            val bundle = Bundle().apply {
+                putParcelable("imageUri", imageUri)
+            }
+
+            // Navigasi ke SearchFragment dan kirim bundle
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment, bundle)
         }
     }
     private fun setupRecyclerViews() {
@@ -73,9 +95,10 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                 val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 binding.rvHorizontal.layoutManager = layoutManager
             }
-
             productAdapter = ProductAdapter(this)
             val layoutManager = GridLayoutManager(context, 2)
+
+
             binding.rvVertical.apply {
                 this.layoutManager = layoutManager
                 adapter = productAdapter
@@ -88,15 +111,18 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                 layoutManager.onRestoreInstanceState(it)
             }
         }
+            showShimmerCategory()
     }
 
     private fun observeProducts() {
         productViewModel.listMenuResponse.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is NetworkResult.Loading -> {
+                    productAdapter.showShimmerEffect()
                     Log.d("HomeFragment", "Loading products...")
                 }
                 is NetworkResult.Success -> {
+                    productAdapter.hideShimmerEffect()
                     response.data?.let { products ->
                         productAdapter.setData(products)
 
@@ -120,9 +146,11 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
             productViewModel.categoryResponse.observe(viewLifecycleOwner) { response ->
                 when (response) {
                     is NetworkResult.Loading -> {
+                        showShimmerCategory()
                         Log.d("HomeFragment", "Loading categories...")
                     }
                     is NetworkResult.Success -> {
+                        hideShimmerCategory()
                         response.data?.let { categories ->
                             categoryAdapter.setData(categories)
                         }
@@ -199,6 +227,18 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                     navController.navigateUp()
                 }
             }
+    }
+
+    private fun showShimmerCategory() {
+        binding.shimmerCategory.visibility = View.VISIBLE
+        binding.shimmerCategory.startShimmer()
+        binding.rvHorizontal.visibility = View.GONE
+    }
+
+    private fun hideShimmerCategory() {
+        binding.shimmerCategory.stopShimmer()
+        binding.shimmerCategory.visibility = View.GONE
+        binding.rvHorizontal.visibility = View.VISIBLE
     }
 
     override fun onPause() {

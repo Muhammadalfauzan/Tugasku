@@ -22,6 +22,7 @@ class LocalDataSource @Inject constructor(
         productDao.insertProduct(product)
     }
 
+
     fun searchProductsByLabel(label: String): List<ProductItems> {
         return productDao.searchProductsByLabel(label)
     }
