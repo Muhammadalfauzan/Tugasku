@@ -53,6 +53,7 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
+
     @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun setDataProduct() {
         item?.let {
@@ -70,6 +71,9 @@ class DetailFragment : Fragment() {
         }
     }
 
+    private fun navigationHomeFragment(){
+        findNavController().popBackStack(R.id.homeFragment,false)
+    }
     private fun addToCart() {
         binding.btCart.setOnClickListener {
 
@@ -82,8 +86,8 @@ class DetailFragment : Fragment() {
                     image = it.image,
                     price = it.price,
                     title = it.title,
-                    quantity = 1,  // Mulai dengan kuantitas 1
-                    totalPrice = it.price  // Inisialisasi dengan harga item
+                    quantity = 1,
+                    totalPrice = it.price
                 )
 
                 // Panggil addToCart dari CartViewModel

@@ -55,11 +55,11 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         observeCategories()
         observeProducts()
         readDataProduct()
-        onBackPressed()
         searchButton()
         productViewModel.getCategory()
         productViewModel.getListMenu()
 
+        onBackPressed()
         return binding.root
     }
     private fun searchButton() {
@@ -95,10 +95,9 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                 val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 binding.rvHorizontal.layoutManager = layoutManager
             }
+
             productAdapter = ProductAdapter(this)
             val layoutManager = GridLayoutManager(context, 2)
-
-
             binding.rvVertical.apply {
                 this.layoutManager = layoutManager
                 adapter = productAdapter
@@ -217,6 +216,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle)
     }
 
+
     private fun onBackPressed() {
         val navController = findNavController()
         requireActivity()
@@ -255,6 +255,6 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null  // Set binding to null to prevent memory leaks
+        _binding = null
     }
 }

@@ -74,7 +74,7 @@ class ProductAdapter(
     }
 
     override fun getItemCount(): Int {
-        return if (isLoading) 10 else products.size // Misal menampilkan 10 shimmer item saat loading
+        return if (isLoading) 8 else products.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -94,20 +94,21 @@ class ProductAdapter(
         val productDiffUtil = ProductDiffutil(products, newData)
         val diffUtilResult = DiffUtil.calculateDiff(productDiffUtil)
         products = newData
-        isLoading = false // Data sudah tersedia, sembunyikan shimmer
+        isLoading = false
         diffUtilResult.dispatchUpdatesTo(this)
     }
 
     fun showShimmerEffect() {
-        isLoading = true // Mengaktifkan shimmer
+        isLoading = true
         notifyDataSetChanged()
     }
 
     fun hideShimmerEffect() {
-        isLoading = false // Menonaktifkan shimmer
+        isLoading = false
         notifyDataSetChanged()
     }
 
+/*
     fun clearData() {
         val diffCallback = ProductDiffutil(products, emptyList())
         val diffResult = DiffUtil.calculateDiff(diffCallback)
@@ -115,6 +116,7 @@ class ProductAdapter(
         isLoading = true // Kembali ke shimmer mode
         diffResult.dispatchUpdatesTo(this)
     }
+*/
 
     interface OnItemClickListener {
         fun onItemClick(data: ProductItem)

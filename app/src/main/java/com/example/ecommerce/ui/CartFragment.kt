@@ -44,7 +44,7 @@ class CartFragment : Fragment() {
         checkCart()
         observeCartItems()
         observeTotalPrice()
-        onBackPressed()
+        handleBackNavigation()
         enableSwipeToDelete(binding.rvCart, cartAdapter)
         return binding.root
     }
@@ -115,7 +115,7 @@ class CartFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
-    private fun onBackPressed() {
+    private fun handleBackNavigation() {
         val navController = findNavController()
         requireActivity()
             .onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

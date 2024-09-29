@@ -6,55 +6,86 @@
     app:startDestination="@id/homeFragment">
 
     <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.ecommerce.ui.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment"
+          />
+        <action
+            android:id="@+id/action_homeFragment_to_cartFragment"
+            app:destination="@id/cartFragment"
+       />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+         />
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.ecommerce.ui.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail">
+
+        <action
+            android:id="@+id/action_detailFragment_to_homeFragment"
+            app:destination="@id/homeFragment"/>
+        <!--app:launchSingleTop="true"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="true"-->
+        <action
+            android:id="@+id/action_detailFragment_to_cartFragment"
+            app:destination="@id/cartFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.ecommerce.ui.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" >
         <action
-            android:id="@+id/action_cartFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_cartFragment_to_orderFragment"
+          />
         <action
             android:id="@+id/action_cartFragment_to_homeFragment"
             app:destination="@id/homeFragment"
-            />
+            app:launchSingleTop="true"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_cartFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+           />
     </fragment>
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.ecommerce.ui.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.ecommerce.ui.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_profile" >
         <action
-            android:id="@+id/action_homeFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/detailFragment"
-        android:name="com.example.ecommerce.ui.DetailFragment"
-        android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" >
-        <action
-            android:id="@+id/action_detailFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
-        <action
-            android:id="@+id/action_detailFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_profileFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.ecommerce.ui.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
-
+        <action
+            android:id="@+id/action_searchFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
+
 </navigation>

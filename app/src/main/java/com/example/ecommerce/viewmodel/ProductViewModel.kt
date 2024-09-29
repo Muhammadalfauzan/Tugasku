@@ -43,10 +43,33 @@ class ProductViewModel @Inject constructor(
     /** ML Kit Search Labeling **/
     var searchResultResponse: MutableLiveData<List<ProductItem>> = MutableLiveData()
 
+
+    /** Variabel Penanda untuk Mengecek Status Data **/
+    private var hasFetchedCategories = false
+    private var hasFetchedProducts = false
+
     /** Mengambil Kategori dari API **/
     fun getCategory() = viewModelScope.launch {
-        getCategorySafeCall()
+        // Cek apakah sudah fetch data kategori sebelumnya
+        if (!hasFetchedCategories) {
+            getCategorySafeCall()
+            hasFetchedCategories = true
+        }
     }
+
+    /** Mengambil Daftar Produk dari API **/
+    fun getListMenu() = viewModelScope.launch {
+        // Cek apakah sudah fetch data produk sebelumnya
+        if (!hasFetchedProducts) {
+            getListMenuSafeCall()
+            hasFetchedProducts = true
+        }
+    }
+
+   /* *//** Mengambil Kategori dari API **//*
+    fun getCategory() = viewModelScope.launch {
+        getCategorySafeCall()
+    }*/
 
     /** Menganalisis Gambar dengan ML Kit **/
     fun analyzeImageWithMLKit(bitmap: Bitmap) {
@@ -155,10 +178,10 @@ class ProductViewModel @Inject constructor(
     }
 
     //============================================== MENU ==============================================//
-    fun getListMenu() = viewModelScope.launch {
+   /* fun getListMenu() = viewModelScope.launch {
         getListMenuSafeCall()
     }
-
+*/
     private suspend fun getListMenuSafeCall() {
         listMenuResponse.value = NetworkResult.Loading()
         if (hasInternetConnection()) {
@@ -200,7 +223,7 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    /** Menyimpan Produk ke Database Room **/
+
     private fun insertProduct(product: ProductItems) =
         viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
 

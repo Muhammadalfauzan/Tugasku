@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id ("kotlin-kapt")
     id ("kotlin-parcelize")
-    id ("androidx.navigation.safeargs")
+    id ("androidx.navigation.safeargs.kotlin")
     id ("com.google.dagger.hilt.android")
     id ("com.google.gms.google-services")
     id ("com.google.firebase.crashlytics")
@@ -37,8 +37,8 @@ android {
         }*/
 
         debug {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro")
         }
@@ -57,7 +57,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.activity)
+    implementation (libs.androidx.activity.ktx)
+    implementation (libs.androidx.fragment.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
@@ -67,8 +68,8 @@ dependencies {
 
 
     //Navigation Component
-    implementation (libs.androidx.navigation.fragment.ktx)
-    implementation (libs.androidx.navigation.ui.ktx)
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.8.1")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.8.1")
 
     //Retrofit
     implementation(libs.retrofit)
@@ -103,12 +104,10 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // Firebase
-
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.crashlytics)
-
     implementation( libs.androidx.swiperefreshlayout)
 
     // encrypted
@@ -122,6 +121,9 @@ dependencies {
 
     //Shimer Efek
     implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
+    // Biometric
+    implementation ("androidx.biometric:biometric:1.2.0-alpha05")
 }
     kapt {
         correctErrorTypes =  true

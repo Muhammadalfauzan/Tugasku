@@ -3,21 +3,22 @@
 buildscript {
     repositories {
         // other repositories...
+        google()
         mavenCentral()
     }
 
     dependencies {
 
         classpath(libs.androidx.navigation.safe.args.gradle.plugin)
-        classpath(libs.hilt.android.gradle.plugin)
-        /*  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0"
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.48.1'*/
+        classpath (libs.hilt.android.gradle.plugin)
+
+
     }
 }
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
-
+    id ("com.android.library") version "8.0.2" apply false
     id("com.google.dagger.hilt.android") version "2.52" apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.firebase.crashlytics") version "3.0.2" apply false
