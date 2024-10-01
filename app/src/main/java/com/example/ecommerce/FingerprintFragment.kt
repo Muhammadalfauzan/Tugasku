@@ -26,47 +26,33 @@ import dagger.hilt.android.AndroidEntryPoint
 class FingerprintFragment : Fragment(), BiometricAuthListener {
 
     private lateinit var sharedPrefsUser: SharedPreferencesUser
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var fingerprintSwitch: SwitchMaterial
     private val loginViewModel: LoginViewModel by viewModels()
-    @SuppressLint("MissingInflatedId")
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_fingerprint, container, false)
 
-        // Inisialisasi SharedPreferencesUser untuk menyimpan status fingerprint
+        // Inisialisasi SharedPreferencesUser
         sharedPrefsUser = SharedPreferencesUser(requireContext())
 
         // Inisialisasi Switch toggle dari layout
         fingerprintSwitch = view.findViewById(R.id.btn_switch)
 
-        // Mengambil UID pengguna saat ini (gunakan UID demo jika tidak terhubung dengan Firebase)
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-
-        // Setel switch berdasarkan status fingerprint yang disimpan di SharedPreferences
-        fingerprintSwitch.isChecked = sharedPrefsUser.getFingerprintStatus(uid)
-
+        // Observasi perubahan status fingerprint dari ViewModel
         loginViewModel.fingerprintStatus.observe(viewLifecycleOwner) { isEnabled ->
-            fingerprintSwitch.isChecked = isEnabled
+            fingerprintSwitch.isChecked = isEnabled  // Set switch sesuai dengan status fingerprint di LiveData
         }
+
         // Listener untuk switch fingerprint
         fingerprintSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                loginViewModel.updateFingerprintStatus(isChecked)
-                // Jika switch diaktifkan, tampilkan prompt biometric authentication
-                if (BiometricUtils.isBiometricReady(requireContext())) {
-                    BiometricUtils.showBiometricPrompt(requireActivity() as AppCompatActivity, this)
-                } else {
-                    // Jika perangkat tidak mendukung biometric, beri tahu pengguna dan nonaktifkan switch
-                    Toast.makeText(context, "Biometric not supported or enabled on this device", Toast.LENGTH_SHORT).show()
-                    fingerprintSwitch.isChecked = false
-                }
+                loginViewModel.updateFingerprintStatus(true)
+                Toast.makeText(context, "Fingerprint enabled successfully", Toast.LENGTH_SHORT).show()
             } else {
-                // Jika switch dinonaktifkan, simpan status fingerprint ke SharedPreferences
-                sharedPrefsUser.saveFingerprintStatus(uid, false)
+                loginViewModel.updateFingerprintStatus(false)
                 Toast.makeText(context, "Fingerprint disabled", Toast.LENGTH_SHORT).show()
             }
         }
@@ -74,19 +60,20 @@ class FingerprintFragment : Fragment(), BiometricAuthListener {
         return view
     }
 
-    // Implementasi callback BiometricAuthListener
     override fun onBiometricAuthenticateError(error: Int, errMsg: String) {
         Toast.makeText(context, "Authentication error: $errMsg", Toast.LENGTH_SHORT).show()
-        // Jika terjadi kesalahan, nonaktifkan switch kembali
-        fingerprintSwitch.isChecked = false
+        fingerprintSwitch.isChecked = false  // Jika terjadi kesalahan, nonaktifkan switch kembali
+        loginViewModel.updateFingerprintStatus(false)  // Perbarui status fingerprint di ViewModel
     }
 
     override fun onBiometricAuthenticateSuccess(result: BiometricPrompt.AuthenticationResult) {
-        val email = sharedPrefsUser.getUserEmail() // Gunakan email untuk menyimpan status fingerprint
-        sharedPrefsUser.saveFingerprintStatus(email, true)
-        Log.d("FingerprintDebug", "Fingerprint activated and saved successfully for email: $email")
-
-        Toast.makeText(context, "Fingerprint activated successfully!", Toast.LENGTH_SHORT).show()
-        findNavController().navigate(R.id.action_fingerprintFragment_to_profileFragment)
+        val email = sharedPrefsUser.getUserEmail()
+        if (email.isNotEmpty()) {
+            // Simpan status fingerprint ke SharedPreferences dan perbarui LiveData di ViewModel
+            sharedPrefsUser.saveFingerprintStatus(email, true)
+            loginViewModel.updateFingerprintStatus(true)
+            Toast.makeText(context, "Fingerprint activated successfully!", Toast.LENGTH_SHORT).show()
+        }
     }
 }
+
