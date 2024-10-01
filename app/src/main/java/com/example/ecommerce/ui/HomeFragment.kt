@@ -45,6 +45,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
     private lateinit var productAdapter: ProductAdapter
     private val productViewModel: ProductViewModel by viewModels()
     private var recyclerViewState: Parcelable? = null
+    private val homeViewModel: HomeViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

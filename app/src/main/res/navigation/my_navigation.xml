@@ -77,6 +77,9 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_profileFragment_to_fingerprintFragment"
+            app:destination="@id/fingerprintFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -86,6 +89,15 @@
         <action
             android:id="@+id/action_searchFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fingerprintFragment"
+        android:name="com.example.ecommerce.FingerprintFragment"
+        android:label="fragment_fingerprint"
+        tools:layout="@layout/fragment_fingerprint" >
+        <action
+            android:id="@+id/action_fingerprintFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
 
 </navigation>

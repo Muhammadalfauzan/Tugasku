@@ -176,9 +176,9 @@
             android:id="@+id/imageButton"
             android:layout_width="125dp"
             android:layout_height="wrap_content"
-
             android:contentDescription="facebook"
             android:layout_marginStart="10dp"
+            android:visibility="gone"
             android:src="@drawable/fingerprint"
             app:layout_constraintBottom_toBottomOf="@+id/google_signIn"
             app:layout_constraintStart_toEndOf="@+id/google_signIn"

@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.ecommerce.utils.SharedPreferencesUser
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,12 +18,82 @@ class LoginViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : AndroidViewModel(application) {
 
-    val authState = MutableLiveData<Boolean>()
-    val userDisplayName = MutableLiveData<String>()
-    val userEmail = MutableLiveData<String>()
-    val userPhotoUrl = MutableLiveData<String>()
+    // LiveData untuk memantau status login dan data pengguna
+    val authState = MutableLiveData<Boolean>()  // Status login pengguna
+    val userDisplayName = MutableLiveData<String?>()  // Nama pengguna
+    val userEmail = MutableLiveData<String?>()  // Email pengguna
+    val userPhotoUrl = MutableLiveData<String?>()  // URL foto pengguna
+    val fingerprintStatus = MutableLiveData<Boolean>()  // Status fingerprint
 
-    val sharedPreferencesManager = SharedPreferencesUser(getApplication<Application>())
+    private val sharedPreferencesManager = SharedPreferencesUser(getApplication<Application>())
+
+    init {
+        // Listener untuk memantau perubahan status login
+        firebaseAuth.addAuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                // Pengguna sudah login, perbarui data dan status
+                updateUserStateFromFirebase(user)
+                authState.value = true
+            } else {
+                // Pengguna tidak login, set authState ke false
+                clearUserState()
+                authState.value = false
+            }
+        }
+
+        // Inisialisasi status fingerprint dari SharedPreferences
+        checkFingerprintStatus()
+    }
+
+    // Fungsi untuk mengecek status login dan data pengguna
+    fun checkIfUserIsLoggedIn() {
+        val firebaseUser = firebaseAuth.currentUser
+        val isLoggedIn = sharedPreferencesManager.getLoginStatus()
+
+        if (firebaseUser != null && isLoggedIn) {
+            // Pengguna sudah login
+            updateUserStateFromFirebase(firebaseUser)
+            authState.value = true
+        } else {
+            // Tidak ada pengguna yang login
+            clearUserState()
+            authState.value = false
+        }
+    }
+
+    // Fungsi untuk sinkronisasi data pengguna dari FirebaseUser ke LiveData dan SharedPreferences
+    private fun updateUserStateFromFirebase(user: FirebaseUser) {
+        // Ambil data dari FirebaseUser atau SharedPreferences jika null
+        val email = user.email ?: sharedPreferencesManager.getUserEmail()
+        val displayName = user.displayName ?: sharedPreferencesManager.getUserDisplayName()
+        val photoUrl = user.photoUrl?.toString() ?: sharedPreferencesManager.getUserPhotoUrl()
+
+        // Perbarui LiveData (nilai bisa null karena MutableLiveData bersifat nullable)
+        userEmail.value = email
+        userDisplayName.value = displayName
+        userPhotoUrl.value = photoUrl
+
+        // Simpan ke SharedPreferences untuk menjaga sinkronisasi data
+        sharedPreferencesManager.saveUserEmail(email ?: "")
+        sharedPreferencesManager.saveUserDisplayName(displayName ?: "")
+        sharedPreferencesManager.saveUserPhotoUrl(photoUrl ?: "")
+
+        // Perbarui status fingerprint dari SharedPreferences
+        checkFingerprintStatus()
+    }
+    // Fungsi untuk menghapus data pengguna dari LiveData dan SharedPreferences
+    private fun clearUserState() {
+        // Hapus status login
+        sharedPreferencesManager.saveLoginStatus(false)
+
+        // Reset LiveData
+        userEmail.value = null
+        userDisplayName.value = null
+        userPhotoUrl.value = null
+    }
+
+    // Fungsi untuk login menggunakan akun Google
     fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         Log.d("LoginViewModel", "GoogleSignInAccount received: ${account.displayName}, ${account.email}, ${account.idToken}")
 
@@ -31,24 +102,22 @@ class LoginViewModel @Inject constructor(
             if (task.isSuccessful) {
                 Log.d("LoginViewModel", "Firebase Sign-In successful")
 
-                // simpan informasi user
                 val user = firebaseAuth.currentUser
-
                 if (user != null) {
-                    Log.d("LoginViewModel", "Firebase User info: Name=${user.displayName}, Email=${user.email}, Photo=${user.photoUrl}")
+                    // Simpan Google ID Token ke SharedPreferences
+                    val googleIdToken = account.idToken ?: ""
+                    sharedPreferencesManager.saveGoogleIdToken(googleIdToken)
+                    Log.d("LoginViewModel", "Google ID Token saved: $googleIdToken")
 
-                    authState.value = true
-                    userDisplayName.value = user.displayName
-                    userEmail.value = user.email
-                    userPhotoUrl.value = user.photoUrl.toString()
-
-                    // Simpan data user ke EncryptedSharedPreferences
+                    // Simpan data user lain ke SharedPreferences
                     sharedPreferencesManager.saveLoginStatus(true)
                     sharedPreferencesManager.saveUserEmail(user.email ?: "")
                     sharedPreferencesManager.saveUserDisplayName(user.displayName ?: "")
                     sharedPreferencesManager.saveUserPhotoUrl(user.photoUrl.toString() ?: "")
-                } else {
-                    Log.e("LoginViewModel", "Firebase User is null after sign-in")
+
+                    // Perbarui authState setelah SharedPreferences di-update
+                    authState.value = true
+                    Log.d("LoginViewModel", "authState set to true after successful login")
                 }
             } else {
                 Log.e("LoginViewModel", "Login Failed: ${task.exception?.message}")
@@ -57,31 +126,28 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    // Cek user sudah login
-    fun checkIfUserIsLoggedIn() {
-        val isLoggedIn = sharedPreferencesManager.getLoginStatus()
-        Log.d("EncryptedPrefs", "Login status saved: true")
-        if (isLoggedIn) {
-            Log.d("LoginViewModel", "User is already logged in")
 
-            authState.value = true
-            userDisplayName.value = sharedPreferencesManager.getUserDisplayName()
-            Log.d("EncryptedPrefs", "User display name loaded: $userDisplayName")
-            userEmail.value = sharedPreferencesManager.getUserEmail()
-            Log.d("EncryptedPrefs", "User photo URL loaded: $userEmail")
-            userPhotoUrl.value = sharedPreferencesManager.getUserPhotoUrl()
-            Log.d("EncryptedPrefs", "User photo URL loaded: $userPhotoUrl")
-        } else {
-            Log.d("LoginViewModel", "No user is currently logged in")
-            authState.value = false
-        }
-    }
-
-    fun signOut() {
-        Log.d("LoginViewModel", "User signed out")
+    // Fungsi untuk logout
+    fun logoutUser() {
+        sharedPreferencesManager.saveLoginStatus(false)
         firebaseAuth.signOut()
-
-        sharedPreferencesManager.clearUserData()
+        clearUserState()
         authState.value = false
     }
+
+    // Fungsi untuk mengecek status fingerprint di SharedPreferences
+    fun checkFingerprintStatus() {
+        val uid = firebaseAuth.currentUser?.uid ?: ""
+        val isFingerprintEnabled = sharedPreferencesManager.getFingerprintStatus(uid)
+        fingerprintStatus.value = isFingerprintEnabled
+    }
+
+    // Fungsi untuk memperbarui status fingerprint di SharedPreferences dan LiveData
+    fun updateFingerprintStatus(isEnabled: Boolean) {
+        val uid = firebaseAuth.currentUser?.uid ?: ""
+        sharedPreferencesManager.saveFingerprintStatus(uid, isEnabled)
+        fingerprintStatus.value = isEnabled
+    }
 }
+
+

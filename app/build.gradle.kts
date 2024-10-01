@@ -126,6 +126,9 @@ dependencies {
 
     // Biometric
     implementation ("androidx.biometric:biometric:1.2.0-alpha05")
+
+    //Free RASP
+    implementation ("com.aheaditec.talsec.security:TalsecSecurity-Community:11.1.1")
 }
     kapt {
         correctErrorTypes =  true

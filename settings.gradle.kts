@@ -7,6 +7,7 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        maven(url = "https://europe-west3-maven.pkg.dev/talsec-artifact-repository/freerasp")
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -18,6 +19,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
+        maven(url = "https://europe-west3-maven.pkg.dev/talsec-artifact-repository/freerasp")
     }
 }
 

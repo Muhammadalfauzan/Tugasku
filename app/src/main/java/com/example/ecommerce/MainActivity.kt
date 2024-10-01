@@ -11,9 +11,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.ecommerce.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-// Import yang diperlukan
-import androidx.activity.OnBackPressedCallback
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
