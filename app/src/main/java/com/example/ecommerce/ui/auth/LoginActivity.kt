@@ -117,6 +117,3 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
         finish()
     }
 }
-
-
-

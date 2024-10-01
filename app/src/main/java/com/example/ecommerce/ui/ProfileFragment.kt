@@ -47,7 +47,7 @@ class ProfileFragment : Fragment() {
         // Handle logout action
         binding.exitButton.setOnClickListener {
             loginViewModel.signOut()
-            sharedPreferencesManager.clearUserData() // Clear login state
+            sharedPreferencesManager.clearUserData()
             navigateToLogin()
         }
 
@@ -57,7 +57,7 @@ class ProfileFragment : Fragment() {
     private fun navigateToLogin() {
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
-        activity?.finish() // Close profile to prevent back navigation
+        activity?.finish()
     }
 }
 

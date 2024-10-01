@@ -28,7 +28,10 @@ import com.example.ecommerce.adapter.CategoryAdapter
 import com.example.ecommerce.adapter.ProductAdapter
 import com.example.ecommerce.data.apimodel.ProductItem
 import com.example.ecommerce.databinding.FragmentHomeBinding
+import com.example.ecommerce.ui.auth.LoginViewModel
 import com.example.ecommerce.utils.NetworkResult
+import com.example.ecommerce.utils.SharedPreferencesUser
+import com.example.ecommerce.viewmodel.HomeViewModel
 import com.example.ecommerce.viewmodel.ProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,9 +44,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var productAdapter: ProductAdapter
     private val productViewModel: ProductViewModel by viewModels()
-
     private var recyclerViewState: Parcelable? = null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,10 +57,12 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         observeProducts()
         readDataProduct()
         searchButton()
+
         productViewModel.getCategory()
         productViewModel.getListMenu()
-
         onBackPressed()
+
+
         return binding.root
     }
     private fun searchButton() {

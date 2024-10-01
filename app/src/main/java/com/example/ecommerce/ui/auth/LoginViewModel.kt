@@ -17,7 +17,6 @@ class LoginViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : AndroidViewModel(application) {
 
-
     val authState = MutableLiveData<Boolean>()
     val userDisplayName = MutableLiveData<String>()
     val userEmail = MutableLiveData<String>()

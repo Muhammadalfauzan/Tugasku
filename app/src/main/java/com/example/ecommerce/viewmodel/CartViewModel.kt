@@ -38,26 +38,24 @@ class CartViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    //  menghapus item dari keranjang berdasarkan ID
     fun deleteCartItemById(cartId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.deleteById(cartId)
         }
     }
 
-    // Fungsi untuk menambah atau memperbarui item di keranjang
     fun addToCart(cartItem: Cart) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.addOrUpdateCartItem(cartItem)
         }
     }
 
-    // Fungsi untuk menghapus semua item di keranjang
+ /*   // Fungsi untuk menghapus semua item di keranjang
     private fun deleteAllItems() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.deleteAllItems()
         }
-    }
+    }*/
 
     // memperbarui item di keranjang
     fun updateCart(cart: Cart) {
@@ -67,7 +65,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    //  menghitung total harga, sekarang tipe data adalah Double
+
     private fun calculateTotalPrice(): LiveData<Double> {
         return repository.local.getAllCartItems().map { cartItems ->
             var total = 0.0
