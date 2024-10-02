@@ -28,9 +28,7 @@ import com.example.ecommerce.adapter.CategoryAdapter
 import com.example.ecommerce.adapter.ProductAdapter
 import com.example.ecommerce.data.apimodel.ProductItem
 import com.example.ecommerce.databinding.FragmentHomeBinding
-import com.example.ecommerce.ui.auth.LoginViewModel
 import com.example.ecommerce.utils.NetworkResult
-import com.example.ecommerce.utils.SharedPreferencesUser
 import com.example.ecommerce.viewmodel.HomeViewModel
 import com.example.ecommerce.viewmodel.ProductViewModel
 import dagger.hilt.android.AndroidEntryPoint

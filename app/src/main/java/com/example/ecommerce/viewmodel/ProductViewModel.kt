@@ -227,7 +227,8 @@ class ProductViewModel @Inject constructor(
     private fun insertProduct(product: ProductItems) =
         viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
 
-    /** Cache Produk Secara Offline **/
+    /** Cache Produk Secara Offline */
+
     private fun offlineCacheMenu(listMenu: Product) {
         listMenu.forEach {
             val menu = ProductItems(

@@ -1,25 +1,18 @@
-package com.example.ecommerce
+package com.example.ecommerce.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Switch
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
+import com.example.ecommerce.R
 import com.example.ecommerce.ui.auth.LoginViewModel
 import com.example.ecommerce.utils.SharedPreferencesUser
 import com.example.ecommerce.utils.biometric.BiometricAuthListener
-import com.example.ecommerce.utils.biometric.BiometricUtils
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

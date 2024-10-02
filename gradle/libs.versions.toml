@@ -36,6 +36,7 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 securityCrypto = "1.1.0-alpha06"
 swiperefreshlayout = "1.1.0"
+activityVersion = "1.9.2"
 
 
 [libraries]
@@ -72,6 +73,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activityVersion" }
 
 
 

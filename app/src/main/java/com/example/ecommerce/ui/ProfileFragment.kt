@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,7 +16,6 @@ import com.example.ecommerce.databinding.FragmentProfileBinding
 import com.example.ecommerce.ui.auth.LoginActivity
 import com.example.ecommerce.ui.auth.LoginViewModel
 import com.example.ecommerce.utils.SharedPreferencesUser
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,10 +29,9 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate layout menggunakan ViewBinding
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        // Initialize SharedPreferences
+        // inisialisasi SharedPreferences
         sharedPrefsUser = SharedPreferencesUser(requireContext())
 
         // Cek apakah user sudah login atau belum
@@ -47,9 +46,8 @@ class ProfileFragment : Fragment() {
             Glide.with(this).load(photoUrl).into(binding.imgProfile)
         }
 
-        // Handle logout action
         binding.exitButton.setOnClickListener {
-            performLogout() // Panggil fungsi logout ketika tombol exit ditekan
+            performLogout()
         }
 
         // Handle navigasi ke FingerprintFragment
@@ -63,19 +61,32 @@ class ProfileFragment : Fragment() {
     private fun performLogout() {
         Log.d("ProfileFragment", "Logout button clicked, logging out user")
 
-        // Panggil fungsi logout di ViewModel
         loginViewModel.logoutUser()
 
-        // Navigasi ke halaman login setelah logout
         navigateToLogin()
     }
 
 
-    // Fungsi untuk navigasi ke LoginActivity setelah logout
+
     private fun navigateToLogin() {
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
-        activity?.finish() // Menutup Activity saat ini
+        activity?.finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Mencegah screenshot di ProfileFragment
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Mengizinkan screenshot di fragment lain
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
     }
 }
 

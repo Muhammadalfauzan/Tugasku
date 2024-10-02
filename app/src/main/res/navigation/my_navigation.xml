@@ -13,6 +13,10 @@
         <action
             android:id="@+id/action_homeFragment_to_detailFragment"
             app:destination="@id/detailFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right"
           />
         <action
             android:id="@+id/action_homeFragment_to_cartFragment"
@@ -24,7 +28,11 @@
          />
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right"/>
     </fragment>
 
     <fragment
@@ -43,6 +51,10 @@
             android:id="@+id/action_detailFragment_to_cartFragment"
             app:destination="@id/cartFragment"
             app:launchSingleTop="true"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true"/>
     </fragment>
@@ -92,7 +104,7 @@
     </fragment>
     <fragment
         android:id="@+id/fingerprintFragment"
-        android:name="com.example.ecommerce.FingerprintFragment"
+        android:name="com.example.ecommerce.ui.FingerprintFragment"
         android:label="fragment_fingerprint"
         tools:layout="@layout/fragment_fingerprint" >
         <action

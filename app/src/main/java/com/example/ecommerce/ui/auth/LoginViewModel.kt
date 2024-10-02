@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.ecommerce.ui.auth
 
 import android.app.Application
