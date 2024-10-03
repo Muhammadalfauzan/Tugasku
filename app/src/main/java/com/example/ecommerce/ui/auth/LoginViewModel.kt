@@ -6,11 +6,13 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.auth0.android.jwt.JWT
 import com.example.ecommerce.utils.SharedPreferencesUser
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +32,8 @@ class LoginViewModel @Inject constructor(
     init {
         checkIfUserIsLoggedIn()
     }
+
+
 
     // Cek apakah pengguna sudah login
     fun checkIfUserIsLoggedIn() {

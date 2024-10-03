@@ -130,6 +130,9 @@ dependencies {
 
     //Free RASP
     implementation ("com.aheaditec.talsec.security:TalsecSecurity-Community:11.1.1")
+
+    // JWT Decode
+    implementation ("com.auth0.android:jwtdecode:2.0.2")
 }
     kapt {
         correctErrorTypes =  true
