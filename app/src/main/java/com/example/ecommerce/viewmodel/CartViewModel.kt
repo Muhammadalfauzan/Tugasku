@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -27,55 +28,67 @@ class CartViewModel @Inject constructor(
     // LiveData untuk semua item di keranjang
     val allCartItems: LiveData<List<Cart>> = repository.local.getAllCartItems()
 
-    private val _cartItemLiveData = MutableLiveData<Cart>()
 
-    // LiveData untuk total harga, sekarang dengan tipe Double
-    var totalPrice: LiveData<Double> = calculateTotalPrice()
+    // Menggunakan MediatorLiveData untuk memantau jumlah total item di keranjang
+    private val _cartItemCount = MediatorLiveData<Int>()
+    val cartItemCount: LiveData<Int> = _cartItemCount
 
-    private val _orderPlacedLiveData = MutableLiveData<NetworkResult<Boolean>>()
-    val orderPlacedLiveData: LiveData<NetworkResult<Boolean>> = _orderPlacedLiveData
+    // LiveData untuk total harga di keranjang
+    val totalPrice: LiveData<Double> = calculateTotalPrice()
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    fun deleteCartItemById(cartId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.local.deleteById(cartId)
+    // Inisialisasi view model untuk perubahan badge di cartfragment
+    init {
+        _cartItemCount.addSource(allCartItems) { cartItems ->
+            val itemCount = cartItems.sumOf { it.quantity }
+            Log.d("CartViewModel", "Total item count calculated: $itemCount")
+            _cartItemCount.value = itemCount
         }
     }
 
     fun addToCart(cartItem: Cart) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.addOrUpdateCartItem(cartItem)
+            Log.d("CartViewModel", "Item added to cart: ${cartItem.title}")
+            updateCartItemCount() // Perbarui jumlah item di keranjang setelah perubahan data
         }
     }
 
- /*   // Fungsi untuk menghapus semua item di keranjang
-    private fun deleteAllItems() {
+    fun deleteCartItemById(cartId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.local.deleteAllItems()
+            repository.local.deleteById(cartId)
+            Log.d("CartViewModel", "Item deleted from cart: $cartId")
+            updateCartItemCount()
         }
-    }*/
+    }
 
-    // memperbarui item di keranjang
     fun updateCart(cart: Cart) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (cart.price != null) {
+                cart.totalPrice = cart.price * cart.quantity
+            } else {
+                // Tampilkan pesan error atau lakukan sesuatu jika price null
+                Log.e("CartViewModel", "Price is null for item: ${cart.title}")
+            }
             repository.local.updateCart(cart)
-            _cartItemLiveData.postValue(cart)
+            Log.d("CartViewModel", "Item updated in cart: ${cart.title}")
+            updateCartItemCount()
+        }
+    }
+
+    private fun calculateTotalPrice(): LiveData<Double> {
+        return allCartItems.map { cartItems ->
+            cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
         }
     }
 
 
-    private fun calculateTotalPrice(): LiveData<Double> {
-        return repository.local.getAllCartItems().map { cartItems ->
-            var total = 0.0
-            for (cartItem in cartItems) {
-                val itemTotalPrice = (cartItem.price ?: 0.0) * cartItem.quantity
-                Log.d("CartViewModel", "Item: ${cartItem.title}, Quantity: ${cartItem.quantity}, Price: ${cartItem.price}, Item Total: $itemTotalPrice")
-                total += itemTotalPrice
+    private fun updateCartItemCount() {
+        viewModelScope.launch(Dispatchers.Main) {
+            allCartItems.value?.let { cartItems ->
+                val itemCount = cartItems.sumOf { it.quantity }
+                Log.d("CartViewModel", "Total item count updated: $itemCount")
+                _cartItemCount.value = itemCount
             }
-            Log.d("CartViewModel", "Total price calculated: $total")
-            total
         }
     }
 
@@ -93,5 +106,4 @@ class CartViewModel @Inject constructor(
             else -> false
         }
     }
-
 }

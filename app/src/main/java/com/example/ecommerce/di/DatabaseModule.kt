@@ -9,6 +9,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import javax.inject.Singleton
 
 
@@ -22,11 +24,19 @@ object DatabaseModule {
     @Provides
     fun provideCartDatabase(
         @ApplicationContext context: Context
-    ) = Room.databaseBuilder(
+    ): CartDatabase {
+        val passphrase : ByteArray = SQLiteDatabase.getBytes("ecommerce-app-key".toCharArray())
+        val factory = SupportFactory(passphrase)
+
+        return Room.databaseBuilder(
         context,
         CartDatabase::class.java,
         "cart_database"
-    ).build()
+    )   .openHelperFactory(factory)
+        .fallbackToDestructiveMigration()
+        .build()
+    }
+
 
     @Singleton
     @Provides

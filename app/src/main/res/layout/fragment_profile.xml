@@ -263,14 +263,14 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_notif" />
+                        android:src="@drawable/ic_lock" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:text="@string/notif"
+                        android:text="@string/security"
                         android:gravity="center_vertical"
                         app:drawableEndCompat="@drawable/ic_cevhron_right" />
                 </LinearLayout>

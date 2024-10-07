@@ -10,8 +10,6 @@ import androidx.room.RoomDatabase
     version = 1,
     exportSchema = false
 )
-
-
 abstract class ProductDatabase : RoomDatabase() {
 
     abstract fun productDao() : ProductDao

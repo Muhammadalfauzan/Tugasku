@@ -1,6 +1,7 @@
 package com.example.ecommerce.data
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.ecommerce.database.cart.Cart
 import com.example.ecommerce.database.cart.CartDao
@@ -13,7 +14,7 @@ class LocalDataSource @Inject constructor(
     private val productDao: ProductDao,
     private val cartDao: CartDao
 ) {
-    /** MENU **/
+    /** PRODUCT **/
     fun readProduct(): Flow<List<ProductItems>> {
         return productDao.readProduct()
     }
@@ -40,9 +41,9 @@ class LocalDataSource @Inject constructor(
         return cartDao.deleteById(cartId)
     }
 
-    suspend fun deleteAllItems() {
+ /*   suspend fun deleteAllItems() {
         return cartDao.deleteAllItems()
-    }
+    }*/
 
     suspend fun updateCart(cartItem: Cart) {
         return cartDao.update(cartItem)
@@ -71,6 +72,7 @@ class LocalDataSource @Inject constructor(
                 totalPrice = (cartItem.price ?: 0.0) * cartItem.quantity  // Hitung total price saat insert
             )
             insertCart(newCartItem)
+            Log.d("LocalDataSource", "Inserted New Cart Item: ${newCartItem.title} - Quantity: ${newCartItem.quantity} - Total Price: ${newCartItem.totalPrice}")
         }
     }
 }

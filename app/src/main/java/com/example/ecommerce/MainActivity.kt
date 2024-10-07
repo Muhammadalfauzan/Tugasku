@@ -2,20 +2,23 @@ package com.example.ecommerce
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.ecommerce.databinding.ActivityMainBinding
+import com.example.ecommerce.viewmodel.CartViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
+    private val cartViewModel: CartViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -31,10 +34,8 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Setup BottomNavigationView dengan NavController
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // Atur visibilitas BottomNavigationView berdasarkan destinasi
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.detailFragment, R.id.searchFragment -> {
@@ -45,7 +46,32 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNavigationView.visibility = View.VISIBLE
                 }
             }
+
         }
+        observeCartItemCount()
+    }
+
+    // badge Menambahkan badge pada item cartFragment
+    private fun observeCartItemCount() {
+        cartViewModel.cartItemCount.observe(this) { itemCount ->
+            // Logging untuk memastikan data terupdate dengan benar
+            Log.d("MainActivity", "Cart item count observed: $itemCount")
+
+            // Dapatkan BadgeDrawable untuk item cartFragment
+            val badge = binding.bottomNavigationView.getOrCreateBadge(R.id.cartFragment)
+
+            // Atur visibilitas dan nomor badge sesuai dengan jumlah item di keranjang
+            if (itemCount > 0) {
+                Log.d("MainActivity", "Badge visible with count: $itemCount")
+                badge.isVisible = true
+                badge.number = itemCount
+            } else {
+                Log.d("MainActivity", "Badge hidden because count is zero.")
+                badge.isVisible = false
+            }
+        }
+    }
+}
 
         /*      // Atur back button behavior untuk HomeFragment
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -85,8 +111,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }*/
-    }
-}
+
 
 
 

@@ -49,7 +49,7 @@ class ProductViewModel @Inject constructor(
     private var hasFetchedProducts = false
 
     /** Mengambil Kategori dari API **/
-    fun getCategory() = viewModelScope.launch {
+    fun getCategory() = viewModelScope.launch { // Dispatchers io untuk operasi jaaringan di main thread
         // Cek apakah sudah fetch data kategori sebelumnya
         if (!hasFetchedCategories) {
             getCategorySafeCall()

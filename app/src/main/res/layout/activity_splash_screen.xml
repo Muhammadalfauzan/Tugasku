@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".SplashScreenActivity">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
+   <!-- <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shimmer_duration="1000"
-        app:shimmer_intensity="0.2">
+        app:shimmer_intensity="0.2">-->
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
+   <!-- </com.facebook.shimmer.ShimmerFrameLayout>-->
     <ProgressBar
         android:id="@+id/progressBar2"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"

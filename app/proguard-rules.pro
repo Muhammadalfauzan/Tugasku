@@ -27,6 +27,8 @@
 
 #keep class kotlinx.coroutines.android.AndroidExceptionPreHandler
 #keep class kotlinx.coroutines.android.AndroidDispatcherFactory
+
+
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 -keep class com.example.ecommerce.data.apimodel.DataCategory { *; }
@@ -36,5 +38,7 @@
 -keep class android.webkit.WebViewClient
 -keep class * extends android.webkit.WebViewClient
 -keepclassmembers class * extends android.webkit.WebViewClient {
-    <methods>;
-}
+    <methods>;}
+
+-keep,includedescriptorclasses class net.sqlcipher.** { * ;}
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }
