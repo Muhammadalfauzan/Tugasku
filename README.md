@@ -1,6 +1,6 @@
 # Tugasku
-Ecommerce APP 
-API : https://fakestoreapi.com/
+Ecommerce APP
+- API : https://fakestoreapi.com/
 
 # Fitur aplikasi
 - Autentikasi login google
