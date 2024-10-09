@@ -1,5 +1,6 @@
 # Tugasku
 Ecommerce APP 
+API : https://fakestoreapi.com/
 
 # Fitur aplikasi
 - Autentikasi login google
@@ -13,13 +14,22 @@ Ecommerce APP
 - SSL Pinning /OKHttp (Certificate Pinning)
 - Free RASP (Runtime Application Self-Protection
 
-# Tech
-- Kotlin Android
+# Tech stack
+Native app written in Kotlin
+- MVVM
 - Kotlin Parcelize
 - Kotlin Kapt
 - Navigation Component
 - Dagger Hilt
 - Google Services
 - Firebase Crashlytics
-
-  
+- Firebase Auth
+- Retrofit
+- Coroutine
+- ML kit
+- Room
+- Live Data
+- Free RASP
+- OKHttp
+- Sql Cipher Encrypted
+- Jwt decode
