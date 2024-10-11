@@ -15,28 +15,30 @@ class LocalDataSource @Inject constructor(
     private val cartDao: CartDao
 ) {
     /** PRODUCT **/
+    //Mengembalikan daftar produk (List<ProductItems>) dalam bentuk Flow yang dapat diobservasi secara reaktif.
     fun readProduct(): Flow<List<ProductItems>> {
         return productDao.readProduct()
     }
-
+    // Menambahkan produk
     suspend fun insertProduct(product:ProductItems ){
         productDao.insertProduct(product)
     }
 
-
+    // Mencari produk berdasarkan label yang diberikan dan mengembalikan daftar hasil pencarian produk
     fun searchProductsByLabel(label: String): List<ProductItems> {
         return productDao.searchProductsByLabel(label)
     }
     /** CART **/
-
+    // Menamahkan item baru ke keranjang
     suspend fun insertCart(cartItem: Cart) {
         cartDao.insert(cartItem)
     }
-
+    // Mengembalikan semua item keranjang dalam bentuk LiveData
     fun getAllCartItems(): LiveData<List<Cart>> {
         return cartDao.getAllCartItems()
     }
 
+    //Menghapus item keranjang beradasarkan id
     suspend fun deleteById(cartId: Long) {
         return cartDao.deleteById(cartId)
     }
@@ -45,17 +47,18 @@ class LocalDataSource @Inject constructor(
         return cartDao.deleteAllItems()
     }*/
 
+    // Memperbarui item keranjang
     suspend fun updateCart(cartItem: Cart) {
         return cartDao.update(cartItem)
     }
 
-
-    suspend fun getCartItemById(cartId: Int): Cart? {
+    // Mendapatkan item keranjang dari database berdasarkan id
+   private suspend fun getCartItemById(cartId: Int): Cart? {
         return cartDao.getCartItemById(cartId)
     }
 
 
-
+    // Menambahkan item baru ke keranjang dan memperbarui item yang sudah ada
     suspend fun addOrUpdateCartItem(cartItem: Cart) {
         val existingCartItem = getCartItemById(cartItem.id)
 

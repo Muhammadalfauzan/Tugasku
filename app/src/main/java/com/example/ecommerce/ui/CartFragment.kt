@@ -36,6 +36,7 @@ class CartFragment : Fragment() {
     ): View {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
 
+        // Inisialisasi RecyclerView dan CartAdapter
         cartAdapter = CartAdapter(cartViewModel)
         binding.rvCart.setHasFixedSize(true)
         binding.rvCart.layoutManager = LinearLayoutManager(requireContext())
@@ -49,6 +50,7 @@ class CartFragment : Fragment() {
         return binding.root
     }
 
+    // Fungsi mengamati LiveData dari allCartItems di ViewModel
     private fun checkCart() {
         cartViewModel.allCartItems.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
@@ -66,7 +68,7 @@ class CartFragment : Fragment() {
 
         }
     }
-
+    // Fungsi mengamati perubahan total harga yang disimpan di LiveData
     @SuppressLint("SetTextI18n")
     private fun observeTotalPrice() {
         cartViewModel.totalPrice.observe(viewLifecycleOwner) { totalPrice ->
@@ -78,14 +80,16 @@ class CartFragment : Fragment() {
         }
     }
 
+    // Fungsi mengamati perubahan data item keranjang dalam LiveData dan memperbarui adapter dengan data terbaru
     private fun observeCartItems() {
         cartViewModel.allCartItems.observe(viewLifecycleOwner) { cartItems ->
             cartItems?.let {
-                cartAdapter.setData(it)
+                cartAdapter.setData(it) // Memperbarui item di adapter ketika ada perubahan data/ Memperbarui item di adapter ketika ada perubahan data
             }
         }
     }
 
+    //Fungsi untuk menghapus item di keranjang
     private fun enableSwipeToDelete(recyclerView: RecyclerView, adapter: CartAdapter) {
         val swipeToDeleteCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
@@ -96,6 +100,7 @@ class CartFragment : Fragment() {
                 return false
             }
 
+            // Menghapus item dari keranjang
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val cartItem = adapter.getCartItemAt(position)
@@ -104,6 +109,7 @@ class CartFragment : Fragment() {
                 cartViewModel.deleteCartItemById(cartItem.id.toLong())
                 adapter.notifyItemRemoved(position)
 
+                // Menampilkan Snackbar untuk undo
                 Snackbar.make(recyclerView, "Item removed from the cart", Snackbar.LENGTH_LONG)
                     .setAction("Undo") {
                         cartViewModel.addToCart(cartItem)
@@ -113,7 +119,7 @@ class CartFragment : Fragment() {
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(recyclerView) // Melampirkan fungsi swipe ke RecyclerView
     }
     private fun handleBackNavigation() {
         val navController = findNavController()
@@ -125,6 +131,6 @@ class CartFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null // Menghapus referensi binding untuk menghindari kebocoran memori
     }
 }

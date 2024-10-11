@@ -27,13 +27,14 @@ object NetworkModule {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        // CertificatePinner untuk SSL Pinning
+        // CertificatePinner untuk SSL Pinning, memastikan koneksi HTTPS lebih aman
         val certificatePinner = CertificatePinner.Builder()
             .add("fakestoreapi.com", "sha256/gmq/FyOqZeCKzhuonKNzGOtWWb8Xl2kGZoc1ptqDxME=")
             .add("fakestoreapi.com", "sha256/kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4=")
             .add("fakestoreapi.com", "sha256/mEflZT5enoR1FuXLgYYGqnVEoZvmf9c2bVBpiOjYQ0c=")
             .build()
 
+        // Membangun OkHttpClient dengan interceptor logging dan certificate pinning
         return OkHttpClient.Builder()
             .addInterceptor(logging)
             .certificatePinner(certificatePinner)
@@ -62,9 +63,11 @@ object NetworkModule {
         return trustManagers[0] as X509TrustManager
     }*/
 
+
     @Singleton
     @Provides
     fun provideConverterFactory(): GsonConverterFactory {
+        // Menyediakan GsonConverterFactory untuk mengonversi JSON menjadi objek Kotlin
         return GsonConverterFactory.create()
     }
 
@@ -74,6 +77,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
+        // Membangun instance Retrofit dengan base URL untuk fakestoreapi.com
         return Retrofit.Builder()
             .baseUrl("https://fakestoreapi.com/")
             .client(okHttpClient)
@@ -84,6 +88,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService {
+        // Menghasilkan instance ApiService, yaitu antarmuka yang mendefinisikan endpoint API
         return retrofit.create(ApiService::class.java)
     }
 
@@ -91,6 +96,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun providesFirebaseAuth(): FirebaseAuth {
+        // Menyediakan instance FirebaseAuth untuk autentikasi pengguna
         return FirebaseAuth.getInstance()
     }
 }

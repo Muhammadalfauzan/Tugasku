@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.example.ecommerce.R
 import com.example.ecommerce.databinding.FragmentProfileBinding
 import com.example.ecommerce.ui.auth.LoginActivity
 import com.example.ecommerce.ui.auth.LoginViewModel
@@ -52,7 +51,8 @@ class ProfileFragment : Fragment() {
 
         // Handle navigasi ke FingerprintFragment
         binding.notification.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_fingerprintFragment)
+            val action = ProfileFragmentDirections.actionProfileFragmentToFingerprintFragment()
+            findNavController().navigate(action)
         }
 
         return binding.root

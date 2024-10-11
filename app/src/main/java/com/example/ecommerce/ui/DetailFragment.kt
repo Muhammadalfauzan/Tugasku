@@ -57,6 +57,7 @@ class DetailFragment : Fragment() {
     @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun setDataProduct() {
         item?.let {
+            // Menggunakan Glide untuk memuat gambar produk ke dalam ImageView
             Glide.with(requireContext())
                 .load(it.image)
                 .into(binding.ivImage)
@@ -71,9 +72,7 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun navigationHomeFragment(){
-        findNavController().popBackStack(R.id.homeFragment,false)
-    }
+
     private fun addToCart() {
         binding.btCart.setOnClickListener {
 
@@ -97,12 +96,20 @@ class DetailFragment : Fragment() {
             }
         }
     }
-    @Suppress("DEPRECATION")
+
+    private fun iconBackClicked() {
+        binding.ivBack.setOnClickListener {
+            // Menggunakan NavController untuk kembali ke fragment sebelumnya
+            findNavController().navigateUp()
+        }
+    }
+
+  /*  @Suppress("DEPRECATION")
     private fun iconBackClicked() {
         binding.ivBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
-    }
+    }*/
 
     @SuppressLint("InflateParams")
     private fun showItemAddedSnackBar() {
@@ -129,10 +136,10 @@ class DetailFragment : Fragment() {
         super.onDestroyView()
 
         if (this::snackBar.isInitialized && snackBar.isShown) {
-            snackBar.dismiss()
+            snackBar.dismiss()  // Jika SnackBar aktif, maka disembunyikan saat fragment dihancurkan
         }
-        detailViewModel.setCurrentAmount(1)
-        item?.let { detailViewModel.clearTotalPrice(it.price) }
+        detailViewModel.setCurrentAmount(1) // Mengatur jumlah item ke 1 saat tampilan hancur
+        item?.let { detailViewModel.clearTotalPrice(it.price) }  // Menghapus total harga untuk item yang ditampilkan
     }
 }
 

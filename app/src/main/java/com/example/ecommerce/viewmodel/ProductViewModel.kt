@@ -24,6 +24,7 @@ import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -49,7 +50,7 @@ class ProductViewModel @Inject constructor(
     private var hasFetchedProducts = false
 
     /** Mengambil Kategori dari API **/
-    fun getCategory() = viewModelScope.launch { // Dispatchers io untuk operasi jaaringan di main thread
+    fun getCategory() = viewModelScope.launch(Dispatchers.IO) { // Dispatchers io untuk operasi jaaringan di main thread
         // Cek apakah sudah fetch data kategori sebelumnya
         if (!hasFetchedCategories) {
             getCategorySafeCall()
@@ -58,7 +59,7 @@ class ProductViewModel @Inject constructor(
     }
 
     /** Mengambil Daftar Produk dari API **/
-    fun getListMenu() = viewModelScope.launch {
+    fun getListMenu() = viewModelScope.launch(Dispatchers.IO) {
         // Cek apakah sudah fetch data produk sebelumnya
         if (!hasFetchedProducts) {
             getListMenuSafeCall()
@@ -134,16 +135,25 @@ class ProductViewModel @Inject constructor(
     }
     /** Mendapatkan Kategori secara Aman **/
     private suspend fun getCategorySafeCall() {
-        categoryResponse.value = NetworkResult.Loading()
+        withContext(Dispatchers.Main) {
+            categoryResponse.postValue(NetworkResult.Loading())
+        }
+
         if (hasInternetConnection()) {
             try {
                 val response = repository.remote.getCategoryMenu()
-                categoryResponse.value = handleCategoryResponse(response)
+                withContext(Dispatchers.Main) {
+                    categoryResponse.postValue(handleCategoryResponse(response))
+                }
             } catch (e: Exception) {
-                categoryResponse.value = NetworkResult.Error("Error: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    categoryResponse.postValue(NetworkResult.Error("Error: ${e.message}"))
+                }
             }
         } else {
-            categoryResponse.value = NetworkResult.Error("No Internet Connection")
+            withContext(Dispatchers.Main) {
+                categoryResponse.postValue(NetworkResult.Error("No Internet Connection"))
+            }
         }
     }
 
@@ -178,26 +188,25 @@ class ProductViewModel @Inject constructor(
     }
 
     //============================================== MENU ==============================================//
-   /* fun getListMenu() = viewModelScope.launch {
-        getListMenuSafeCall()
-    }
-*/
+
     private suspend fun getListMenuSafeCall() {
-        listMenuResponse.value = NetworkResult.Loading()
-        if (hasInternetConnection()) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = repository.remote.getListproduct()
-                listMenuResponse.value = handleListMenuResponse(response)
+                withContext(Dispatchers.Main) {
+                    listMenuResponse.postValue(handleListMenuResponse(response))
 
-                val listMenu = listMenuResponse.value!!.data
-                if (listMenu != null) {
-                    offlineCacheMenu(listMenu)
+                    // Simpan hasil ke dalam cache atau lakukan update UI
+                    val listMenu = listMenuResponse.value?.data
+                    if (listMenu != null) {
+                        offlineCacheMenu(listMenu)
+                    }
                 }
             } catch (e: Exception) {
-                listMenuResponse.value = NetworkResult.Error("Error: $e")
+                withContext(Dispatchers.Main) {
+                    listMenuResponse.postValue(NetworkResult.Error("Error: $e"))
+                }
             }
-        } else {
-            listMenuResponse.value = NetworkResult.Error("No Internet Connection")
         }
     }
 
@@ -225,7 +234,7 @@ class ProductViewModel @Inject constructor(
 
 
     private fun insertProduct(product: ProductItems) =
-        viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
+    viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
 
     /** Cache Produk Secara Offline */
 

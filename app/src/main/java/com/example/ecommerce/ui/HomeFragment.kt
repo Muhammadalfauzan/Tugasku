@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
@@ -34,6 +33,7 @@ import com.example.ecommerce.viewmodel.ProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
@@ -43,11 +43,11 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
     private lateinit var productAdapter: ProductAdapter
     private val productViewModel: ProductViewModel by viewModels()
     private var recyclerViewState: Parcelable? = null
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel : HomeViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupBanner()
@@ -60,10 +60,17 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         productViewModel.getCategory()
         productViewModel.getListMenu()
         onBackPressed()
-
+        observeUserDisplayName()
 
         return binding.root
     }
+
+    private fun observeUserDisplayName() {
+        homeViewModel.userDisplayName.observe(viewLifecycleOwner) { displayName ->
+            binding.textView2.text = displayName
+        }
+    }
+
     private fun searchButton() {
         binding.searchView.setOnClickListener {
             pickImageFromGallery()
@@ -199,7 +206,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         Handler(Looper.getMainLooper()).postDelayed({
             _binding?.let { binding ->
                 val imgSlider = binding.bannerLayout.imageSlider
-                imgSlider?.let {
+                imgSlider.let {
                     val slides = ArrayList<SlideModel>()
                     slides.add(SlideModel(R.drawable.banner_shoes))
                     slides.add(SlideModel(R.drawable.banner_shoes))

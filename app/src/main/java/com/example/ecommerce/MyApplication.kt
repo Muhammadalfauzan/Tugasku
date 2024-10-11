@@ -2,7 +2,6 @@ package com.example.ecommerce
 
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import com.aheaditec.talsec_security.security.api.SuspiciousAppInfo
 import com.aheaditec.talsec_security.security.api.Talsec
 import com.aheaditec.talsec_security.security.api.TalsecConfig
@@ -10,8 +9,9 @@ import com.aheaditec.talsec_security.security.api.ThreatListener
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class MyApplication: Application(), ThreatListener.ThreatDetected{
+class MyApplication: Application(), ThreatListener.ThreatDetected{  // menginisalisasi threatListener dan mendaftarkan listener
 
+    // variable konstanta
     companion object {
         private const val expectedPackageName = "com.example.ecommerce"
         private val expectedSigningCertificateHashBase64 = arrayOf(
@@ -87,8 +87,7 @@ class MyApplication: Application(), ThreatListener.ThreatDetected{
        /* showToast("Malware Detected! Potential malicious apps installed.")*/
     }
 
-    private fun showToast(message: String) {
+   /* private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-
+    }*/
 }

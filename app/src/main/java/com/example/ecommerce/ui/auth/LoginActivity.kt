@@ -57,10 +57,10 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
         fingerprintButton = findViewById(R.id.imageButton)
         fingerprintButton.visibility = View.GONE // Sembunyikan tombol fingerprint di awal
 
-        // Observasi status login dari ViewModel
+        // Observe status login dari ViewModel
         observeLoginState()
 
-        // Observasi status fingerprint dari ViewModel
+        // Observe status fingerprint dari ViewModel
         observeFingerprintStatus()
 
         // Periksa status fingerprint dari SharedPreferences setiap kali Activity dibuka kembali
@@ -78,7 +78,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
     }
 
 
-    // Observasi perubahan pada authState dari ViewModel
+    // Observe perubahan pada authState dari ViewModel
     private fun observeLoginState() {
         loginViewModel.authState.observe(this) { isLoggedIn ->
             if (isLoggedIn == true) {
@@ -115,7 +115,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
             Log.e("LoginActivity", "Email is missing. Cannot check fingerprint status.")
         }
     }
-
+    // Fungsi untuk set up login google dan triger button
     private fun setupGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -138,7 +138,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
 
     @SuppressLint("ObsoleteSdkInt", "SuspiciousIndentation")
     @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {  // Menangani hasil dari Google Sign-In. Jika berhasi
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -173,6 +173,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
         val email = sharedPrefsUser.getUserEmail()
         Log.d("FingerprintDebug", "Login attempt with email: $email")
 
+        // Logika login dengan fingerprint, memeriksa token Google yang tersimpan dan mengautentikasi ke Firebase.
         if (email.isNotEmpty()) {
             // Ambil Google ID Token dari SharedPreferences
             val googleIdToken = sharedPrefsUser.getGoogleIdToken()
@@ -225,6 +226,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
             true  // Jika terjadi error, anggap token sudah kadaluarsa
         }
     }
+
     private fun navigateToHome() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

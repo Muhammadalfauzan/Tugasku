@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id ("kotlin-kapt")
-    id ("kotlin-parcelize")
-    id ("androidx.navigation.safeargs.kotlin")
-    id ("com.google.dagger.hilt.android")
+    id ("kotlin-kapt") // Memproses anotasi di kotlin
+    id ("kotlin-parcelize") // parsing data with bundle
+    id ("androidx.navigation.safeargs.kotlin") // interface navigation
+    id ("com.google.dagger.hilt.android") // dependency injection, modular dan aman
     id ("com.google.gms.google-services")
     id ("com.google.firebase.crashlytics")
 }
@@ -29,12 +29,15 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro")
         }
 
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro")
@@ -68,14 +71,15 @@ dependencies {
     //Navigation Component
     implementation ("androidx.navigation:navigation-fragment-ktx:2.8.1")
     implementation ("androidx.navigation:navigation-ui-ktx:2.8.1")
+    // Dagger - Hilt
+    implementation(libs.dagger.hilt.android.v252)
+    annotationProcessor(libs.dagger.hilt.compiler.v252)
 
     //Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-    // Dagger - Hilt
-    implementation(libs.dagger.hilt.android.v252)
-    annotationProcessor(libs.dagger.hilt.compiler.v252)
+
 
     implementation(libs.dagger.hilt.android.v252)
     kapt(libs.dagger.hilt.compiler.v252)

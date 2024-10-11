@@ -9,6 +9,6 @@ interface ApiService {
     @GET("products/categories")
     suspend fun getCategoryDI(): Response<List<String>>
 
-    @GET("products")  // Ubah endpoint jika diperlukan
+    @GET("products")
     suspend fun getProduct(): Response<Product>
 }

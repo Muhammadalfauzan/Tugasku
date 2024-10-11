@@ -1,5 +1,6 @@
 package com.example.ecommerce
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,10 +16,12 @@ import com.example.ecommerce.viewmodel.CartViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val cartViewModel: CartViewModel by viewModels()
+    @SuppressLint("ObsoleteSdkInt")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -30,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         }
 
+        // Mengatur navigasi
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
@@ -48,19 +52,19 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+        // Observe jumlah item di cart
         observeCartItemCount()
     }
 
-    // badge Menambahkan badge pada item cartFragment
+    // Menambahkan badge pada item cartFragment
     private fun observeCartItemCount() {
         cartViewModel.cartItemCount.observe(this) { itemCount ->
-            // Logging untuk memastikan data terupdate dengan benar
             Log.d("MainActivity", "Cart item count observed: $itemCount")
 
             // Dapatkan BadgeDrawable untuk item cartFragment
             val badge = binding.bottomNavigationView.getOrCreateBadge(R.id.cartFragment)
 
-            // Atur visibilitas dan nomor badge sesuai dengan jumlah item di keranjang
+            // Mengatur badge untuk item di keranjang
             if (itemCount > 0) {
                 Log.d("MainActivity", "Badge visible with count: $itemCount")
                 badge.isVisible = true
@@ -72,46 +76,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-        /*      // Atur back button behavior untuk HomeFragment
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (navController.currentDestination?.id == R.id.homeFragment) {
-                    // Log untuk memastikan callback dieksekusi
-                    Log.d("MainActivity", "Back pressed in HomeFragment - Exiting app")
-                    finish() // Keluar dari aplikasi jika berada di HomeFragment
-                } else {
-                    navController.popBackStack() // Kembali ke fragment sebelumnya jika tidak di HomeFragment
-                }
-            }
-        })*/
-
-        /*  // Set up listener untuk BottomNavigationView agar menghindari reload fragment yang sudah ada
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.homeFragment -> {
-                    if (navController.currentDestination?.id != R.id.homeFragment) {
-                        navController.navigate(R.id.homeFragment)
-                    }
-                    true
-                }
-                R.id.cartFragment -> {
-                    if (navController.currentDestination?.id != R.id.cartFragment) {
-                        navController.navigate(R.id.cartFragment)
-                    }
-                    true
-                }
-                R.id.profileFragment -> {
-                    if (navController.currentDestination?.id != R.id.profileFragment) {
-                        navController.navigate(R.id.profileFragment)
-                    }
-                    true
-                }
-                else -> false
-            }
-        }
-    }*/
-
-
-
-
