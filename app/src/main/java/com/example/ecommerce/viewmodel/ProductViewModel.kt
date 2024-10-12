@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -45,18 +47,19 @@ class ProductViewModel @Inject constructor(
     var searchResultResponse: MutableLiveData<List<ProductItem>> = MutableLiveData()
 
 
-    /** Variabel Penanda untuk Mengecek Status Data **/
-    private var hasFetchedCategories = false
-    private var hasFetchedProducts = false
+    /** inisialisasi Penanda untuk Mengecek Status Data **/
+    var hasFetchedCategories = false
+    var hasFetchedProducts = false
 
     /** Mengambil Kategori dari API **/
-    fun getCategory() = viewModelScope.launch(Dispatchers.IO) { // Dispatchers io untuk operasi jaaringan di main thread
-        // Cek apakah sudah fetch data kategori sebelumnya
-        if (!hasFetchedCategories) {
-            getCategorySafeCall()
-            hasFetchedCategories = true
+    fun getCategory() =
+        viewModelScope.launch(Dispatchers.IO) { // Dispatchers io untuk operasi jaaringan di main thread
+            // Cek apakah sudah fetch data kategori sebelumnya
+            if (!hasFetchedCategories) {
+                getCategorySafeCall()
+                hasFetchedCategories = true
+            }
         }
-    }
 
     /** Mengambil Daftar Produk dari API **/
     fun getListMenu() = viewModelScope.launch(Dispatchers.IO) {
@@ -67,7 +70,8 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-   /* *//** Mengambil Kategori dari API **//*
+    /* */
+    /** Mengambil Kategori dari API **//*
     fun getCategory() = viewModelScope.launch {
         getCategorySafeCall()
     }*/
@@ -98,7 +102,10 @@ class ProductViewModel @Inject constructor(
                 Log.d("SearchLabel", "Searching products for label: $label")
 
                 val products = repository.local.searchProductsByLabel(label)
-                Log.d("SearchLabel", "Found products for label '$label': ${products.map { it.title }}")
+                Log.d(
+                    "SearchLabel",
+                    "Found products for label '$label': ${products.map { it.title }}"
+                )
 
                 filteredProducts.addAll(products.map { convertToProductItem(it) })
             }
@@ -126,6 +133,7 @@ class ProductViewModel @Inject constructor(
             rating = rating
         )
     }
+
     fun getConvertedProductItems(): LiveData<List<ProductItem>> {
         return readProduct.map { productItemsList ->
             productItemsList.map { productItems ->
@@ -133,6 +141,7 @@ class ProductViewModel @Inject constructor(
             }
         }
     }
+
     /** Mendapatkan Kategori secara Aman **/
     private suspend fun getCategorySafeCall() {
         withContext(Dispatchers.Main) {
@@ -144,6 +153,10 @@ class ProductViewModel @Inject constructor(
                 val response = repository.remote.getCategoryMenu()
                 withContext(Dispatchers.Main) {
                     categoryResponse.postValue(handleCategoryResponse(response))
+                    // Tandai bahwa kategori sudah di-fetch jika berhasil
+                    if (response.isSuccessful) {
+                        hasFetchedCategories = true
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -157,14 +170,17 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+
     private fun handleCategoryResponse(response: Response<List<String>>): NetworkResult<List<String>> {
         return when {
             response.message().toString().contains("timeout") -> {
                 NetworkResult.Error("Timeout")
             }
+
             response.code() == 402 -> {
                 NetworkResult.Error("API Key Limited")
             }
+
             response.isSuccessful -> {
                 val categories = response.body()
                 if (categories != null) {
@@ -173,6 +189,7 @@ class ProductViewModel @Inject constructor(
                     NetworkResult.Error("Empty Response")
                 }
             }
+
             else -> {
                 NetworkResult.Error(response.message())
             }
@@ -181,7 +198,8 @@ class ProductViewModel @Inject constructor(
 
     /** Memeriksa Koneksi Internet **/
     private fun hasInternetConnection(): Boolean {
-        val connectivityManager = getApplication<Application>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getApplication<Application>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -190,25 +208,32 @@ class ProductViewModel @Inject constructor(
     //============================================== MENU ==============================================//
 
     private suspend fun getListMenuSafeCall() {
-        viewModelScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.Main) {
+            listMenuResponse.postValue(NetworkResult.Loading())
+        }
+
+        if (hasInternetConnection()) {
             try {
                 val response = repository.remote.getListproduct()
                 withContext(Dispatchers.Main) {
                     listMenuResponse.postValue(handleListMenuResponse(response))
-
-                    // Simpan hasil ke dalam cache atau lakukan update UI
-                    val listMenu = listMenuResponse.value?.data
-                    if (listMenu != null) {
-                        offlineCacheMenu(listMenu)
+                    // Tandai bahwa produk sudah di-fetch jika berhasil
+                    if (response.isSuccessful) {
+                        hasFetchedProducts = true
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    listMenuResponse.postValue(NetworkResult.Error("Error: $e"))
+                    listMenuResponse.postValue(NetworkResult.Error("Error: ${e.message}"))
                 }
+            }
+        } else {
+            withContext(Dispatchers.Main) {
+                listMenuResponse.postValue(NetworkResult.Error("No Internet Connection"))
             }
         }
     }
+
 
     private fun handleListMenuResponse(response: Response<Product>): NetworkResult<Product> {
         return when {
@@ -234,7 +259,7 @@ class ProductViewModel @Inject constructor(
 
 
     private fun insertProduct(product: ProductItems) =
-    viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
+        viewModelScope.launch(Dispatchers.IO) { repository.local.insertProduct(product) }
 
     /** Cache Produk Secara Offline */
 
@@ -251,6 +276,17 @@ class ProductViewModel @Inject constructor(
                 ratingCount = it.rating.count
             )
             insertProduct(menu)
+        }
+    }
+
+    fun fetchDataOnConnectionAvailable() {
+        viewModelScope.launch {
+            if (categoryResponse.value !is NetworkResult.Success) {
+                getCategorySafeCall()
+            }
+            if (listMenuResponse.value !is NetworkResult.Success) {
+                getListMenuSafeCall()
+            }
         }
     }
 }

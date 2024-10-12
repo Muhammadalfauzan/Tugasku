@@ -1,7 +1,12 @@
 package com.example.ecommerce.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -43,7 +48,8 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
     private lateinit var productAdapter: ProductAdapter
     private val productViewModel: ProductViewModel by viewModels()
     private var recyclerViewState: Parcelable? = null
-    private val homeViewModel : HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,6 +63,8 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         readDataProduct()
         searchButton()
 
+
+        registerNetworkCallback()
         productViewModel.getCategory()
         productViewModel.getListMenu()
         onBackPressed()
@@ -81,6 +89,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, 1000)
     }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -96,12 +105,14 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_searchFragment, bundle)
         }
     }
+
     private fun setupRecyclerViews() {
         _binding?.let { binding ->
             categoryAdapter = CategoryAdapter()
             binding.rvHorizontal.apply {
                 adapter = categoryAdapter
-                val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                val layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 binding.rvHorizontal.layoutManager = layoutManager
             }
 
@@ -119,7 +130,7 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                 layoutManager.onRestoreInstanceState(it)
             }
         }
-            showShimmerCategory()
+        showShimmerCategory()
     }
 
     private fun observeProducts() {
@@ -129,17 +140,20 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                     productAdapter.showShimmerEffect()
                     Log.d("HomeFragment", "Loading products...")
                 }
+
                 is NetworkResult.Success -> {
                     productAdapter.hideShimmerEffect()
                     response.data?.let { products ->
                         productAdapter.setData(products)
 
                         recyclerViewState?.let {
-                            val layoutManager = _binding?.rvVertical?.layoutManager as GridLayoutManager
+                            val layoutManager =
+                                _binding?.rvVertical?.layoutManager as GridLayoutManager
                             layoutManager.onRestoreInstanceState(it)
                         }
                     }
                 }
+
                 is NetworkResult.Error -> {
                     loadMenuFromCache()
                     Log.e("HomeFragment", "Error fetching products: ${response.message}")
@@ -157,15 +171,18 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
                         showShimmerCategory()
                         Log.d("HomeFragment", "Loading categories...")
                     }
+
                     is NetworkResult.Success -> {
                         hideShimmerCategory()
                         response.data?.let { categories ->
                             categoryAdapter.setData(categories)
                         }
                     }
+
                     is NetworkResult.Error -> {
                         Log.e("HomeFragment", "Error fetching categories: ${response.message}")
-                        Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, response.message ?: "Error", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
@@ -189,15 +206,17 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
     private fun readDataProduct() {
         _binding?.let {
             lifecycleScope.launch {
-                productViewModel.getConvertedProductItems().observe(viewLifecycleOwner) { products ->
-                    if (products.isNotEmpty()) {
-                        productAdapter.setData(products) // Data sudah dikonversi menjadi ProductItem
-                        recyclerViewState?.let {
-                            val layoutManager = binding.rvVertical.layoutManager as GridLayoutManager
-                            layoutManager.onRestoreInstanceState(it)
+                productViewModel.getConvertedProductItems()
+                    .observe(viewLifecycleOwner) { products ->
+                        if (products.isNotEmpty()) {
+                            productAdapter.setData(products) // Data sudah dikonversi menjadi ProductItem
+                            recyclerViewState?.let {
+                                val layoutManager =
+                                    binding.rvVertical.layoutManager as GridLayoutManager
+                                layoutManager.onRestoreInstanceState(it)
+                            }
                         }
                     }
-                }
             }
         }
     }
@@ -250,6 +269,34 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
         binding.rvHorizontal.visibility = View.VISIBLE
     }
 
+    // Handle network disconnect
+    private fun registerNetworkCallback() {
+        val connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                // Fetch ulang data hanya ketika internet kembali
+                if (productViewModel.categoryResponse.value is NetworkResult.Error || productViewModel.listMenuResponse.value is NetworkResult.Error) {
+                    Log.d("NetworkCallback", "Internet kembali, fetch ulang data.")
+                    productViewModel.fetchDataOnConnectionAvailable()
+                } else {
+                    Log.d("NetworkCallback", "Internet kembali, tetapi data sudah ada.")
+                }
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
+            }
+        }
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+    }
+
     override fun onPause() {
         super.onPause()
         recyclerViewState = binding.rvVertical.layoutManager?.onSaveInstanceState()
@@ -264,6 +311,10 @@ class HomeFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Unregister network callback saat fragment dihancurkan (opsional)
+        val connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.unregisterNetworkCallback(networkCallback)
         _binding = null
     }
 }

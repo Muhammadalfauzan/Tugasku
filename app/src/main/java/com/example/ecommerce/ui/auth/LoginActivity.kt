@@ -3,7 +3,10 @@
 package com.example.ecommerce.ui.auth
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -41,9 +44,9 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var sharedPrefsUser: SharedPreferencesUser
     private lateinit var fingerprintButton: MaterialButton
-    private lateinit var edEmaail : EditText
-    private lateinit var edPassword : EditText
-    private lateinit var btLogin : Button
+    private lateinit var edEmaail: EditText
+    private lateinit var edPassword: EditText
+    private lateinit var btLogin: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +99,11 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
                     if (BiometricUtils.isBiometricReady(this)) {
                         BiometricUtils.showBiometricPrompt(this, this)
                     } else {
-                        Toast.makeText(this, "Biometric not supported on this device", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Biometric not supported on this device",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             } else {
@@ -115,6 +122,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
             Log.e("LoginActivity", "Email is missing. Cannot check fingerprint status.")
         }
     }
+
     // Fungsi untuk set up login google dan triger button
     private fun setupGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -129,6 +137,13 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
     }
 
     private fun signInWithGoogle() {
+
+        // cek koneksi internet sebelum login
+        if (!hasInternetConnection()) {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // lanjutkan proses login jika ada koneksi
         showLoading()
         googleSignInClient.signOut().addOnCompleteListener {
             val signInIntent = googleSignInClient.signInIntent
@@ -136,9 +151,22 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
         }
     }
 
+    private fun hasInternetConnection(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
     @SuppressLint("ObsoleteSdkInt", "SuspiciousIndentation")
     @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {  // Menangani hasil dari Google Sign-In. Jika berhasi
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {  // Menangani hasil dari Google Sign-In. Jika berhasi
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -150,17 +178,17 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
                 hideLoading()
                 Log.e("LoginActivity", "Google Sign-In failed: ${e.message}")
             }
-        /*}else if (requestCode == REQUEST_CODE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "Overlay permission granted", Toast.LENGTH_SHORT).show()
-                // Setel agar overlay disembunyikan hanya jika API level >= 31 (Android 12 ke atas)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    window.setHideOverlayWindows(true)
-                }
-            } else {
-                Toast.makeText(this, "Overlay permission is required for this app", Toast.LENGTH_SHORT).show()
-                finish()
-            }*/
+            /*}else if (requestCode == REQUEST_CODE) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+                    Toast.makeText(this, "Overlay permission granted", Toast.LENGTH_SHORT).show()
+                    // Setel agar overlay disembunyikan hanya jika API level >= 31 (Android 12 ke atas)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        window.setHideOverlayWindows(true)
+                    }
+                } else {
+                    Toast.makeText(this, "Overlay permission is required for this app", Toast.LENGTH_SHORT).show()
+                    finish()
+                }*/
         }
     }
 
@@ -180,7 +208,10 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
 
             // Cek apakah ID Token sudah kadaluarsa
             if (googleIdToken.isEmpty() || isIdTokenExpired(googleIdToken)) {
-                Log.e("FingerprintDebug", "ID Token is expired or missing. Attempting to refresh token.")
+                Log.e(
+                    "FingerprintDebug",
+                    "ID Token is expired or missing. Attempting to refresh token."
+                )
                 // Lakukan refresh ID token jika sudah kadaluarsa
                 refreshGoogleIdTokenAndLogin()
                 return
@@ -193,25 +224,43 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
                 FirebaseAuth.getInstance().signInWithCredential(credential)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Log.d("FingerprintDebug", "Login successful with Google account after fingerprint authentication.")
+                            Log.d(
+                                "FingerprintDebug",
+                                "Login successful with Google account after fingerprint authentication."
+                            )
                             sharedPrefsUser.saveLoginStatus(true)  // Set login status ke true
                             hideLoading()
                             navigateToHome()
                         } else {
-                            Log.e("FingerprintDebug", "Login failed after fingerprint authentication: ${task.exception?.message}")
+                            Log.e(
+                                "FingerprintDebug",
+                                "Login failed after fingerprint authentication: ${task.exception?.message}"
+                            )
                             hideLoading()
-                            Toast.makeText(this, "Login gagal. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                "Login gagal. Silakan coba lagi.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
             } else {
                 Log.e("FingerprintDebug", "Google ID Token is missing. Cannot login to Firebase.")
                 hideLoading()
-                Toast.makeText(this, "Tidak dapat login dengan sidik jari. Silakan login ulang dengan akun Google.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Tidak dapat login dengan sidik jari. Silakan login ulang dengan akun Google.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
             Log.e("FingerprintDebug", "Email is missing. Cannot login to Firebase.")
             hideLoading()
-            Toast.makeText(this, "Tidak dapat login dengan sidik jari. Silakan login ulang dengan akun Google.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Tidak dapat login dengan sidik jari. Silakan login ulang dengan akun Google.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -232,13 +281,18 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
         startActivity(intent)
         finish()
     }
+
     /** System Alert Dialog **/
 
     @SuppressLint("ObsoleteSdkInt")
     private fun checkDrawOverlayPermission() {
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "Overlay terdeteksi. Silakan nonaktifkan overlay untuk melanjutkan.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Overlay terdeteksi. Silakan nonaktifkan overlay untuk melanjutkan.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 // Jika belum ada izin, minta izin overlay
                 val intent = Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -284,20 +338,35 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
                                 hideLoading()
                                 navigateToHome()
                             } else {
-                                Log.e("FingerprintDebug", "Login failed with new ID Token: ${authTask.exception?.message}")
+                                Log.e(
+                                    "FingerprintDebug",
+                                    "Login failed with new ID Token: ${authTask.exception?.message}"
+                                )
                                 hideLoading()
-                                Toast.makeText(this, "Login gagal dengan token baru. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Login gagal dengan token baru. Silakan coba lagi.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                 } else {
                     Log.e("FingerprintDebug", "Failed to refresh ID Token. Token is null or empty.")
                     hideLoading()
-                    Toast.makeText(this, "Gagal memperbarui token. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Gagal memperbarui token. Silakan coba lagi.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } else {
                 Log.e("FingerprintDebug", "Failed to refresh ID Token: ${task.exception?.message}")
                 hideLoading()
-                Toast.makeText(this, "Gagal memperbarui token. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Gagal memperbarui token. Silakan coba lagi.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -309,7 +378,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
     }
 
     // Menyembunyikan `CardView` dan `ProgressBar` setelah proses selesai
-   private fun hideLoading() {
+    private fun hideLoading() {
         val cardViewProgress = findViewById<CardView>(R.id.card_loading)
         cardViewProgress.visibility = View.GONE // Sembunyikan CardView beserta ProgressBar
     }
@@ -317,9 +386,9 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
     @SuppressLint("ObsoleteSdkInt")
     override fun onResume() {
         super.onResume()
-      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            window.setHideOverlayWindows(true)
-        }*/
+        /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+              window.setHideOverlayWindows(true)
+          }*/
         checkFingerprintStatus()
 
     }

@@ -42,3 +42,6 @@
 
 -keep,includedescriptorclasses class net.sqlcipher.** { * ;}
 -keep,includedescriptorclasses interface net.sqlcipher.** { *; }
+
+-keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
+-keep public class * extends java.lang.Excep
