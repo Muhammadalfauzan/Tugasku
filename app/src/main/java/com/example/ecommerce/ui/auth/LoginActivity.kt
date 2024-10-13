@@ -178,8 +178,8 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
                 hideLoading()
                 Log.e("LoginActivity", "Google Sign-In failed: ${e.message}")
             }
-            /*}else if (requestCode == REQUEST_CODE) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+            }else if (requestCode == REQUEST_CODE) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Settings.canDrawOverlays(this)) {
                     Toast.makeText(this, "Overlay permission granted", Toast.LENGTH_SHORT).show()
                     // Setel agar overlay disembunyikan hanya jika API level >= 31 (Android 12 ke atas)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -188,7 +188,7 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
                 } else {
                     Toast.makeText(this, "Overlay permission is required for this app", Toast.LENGTH_SHORT).show()
                     finish()
-                }*/
+                }
         }
     }
 
@@ -285,7 +285,8 @@ class LoginActivity : AppCompatActivity(), BiometricAuthListener {
     /** System Alert Dialog **/
 
     @SuppressLint("ObsoleteSdkInt")
-    private fun checkDrawOverlayPermission() {
+    private fun
+            checkDrawOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!Settings.canDrawOverlays(this)) {
                 Toast.makeText(
